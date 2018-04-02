@@ -46,6 +46,41 @@ class Person
      */
     private $participants;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $studyAt;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $specialization;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $course;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $favorite;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $codeSample;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $internship;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $employment;
+
     public function __construct()
     {
         $this->participants = new ArrayCollection();
@@ -131,6 +166,90 @@ class Person
                 $participant->setPerson(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getStudyAt(): ?string
+    {
+        return $this->studyAt;
+    }
+
+    public function setStudyAt(?string $studyAt): self
+    {
+        $this->studyAt = $studyAt;
+
+        return $this;
+    }
+
+    public function getSpecialization(): ?string
+    {
+        return $this->specialization;
+    }
+
+    public function setSpecialization(?string $specialization): self
+    {
+        $this->specialization = $specialization;
+
+        return $this;
+    }
+
+    public function getCourse(): ?string
+    {
+        return $this->course;
+    }
+
+    public function setCourse(?string $course): self
+    {
+        $this->course = $course;
+
+        return $this;
+    }
+
+    public function getFavorite(): ?string
+    {
+        return $this->favorite;
+    }
+
+    public function setFavorite(?string $favorite): self
+    {
+        $this->favorite = $favorite;
+
+        return $this;
+    }
+
+    public function getCodeSample(): ?string
+    {
+        return $this->codeSample;
+    }
+
+    public function setCodeSample(?string $codeSample): self
+    {
+        $this->codeSample = $codeSample;
+
+        return $this;
+    }
+
+    public function getUnternship(): ?bool
+    {
+        return $this->internship;
+    }
+
+    public function setInternship(?bool $internship): self
+    {
+        $this->internship = $internship;
+
+        return $this;
+    }
+
+    public function getEmployment(): ?bool
+    {
+        return $this->employment;
+    }
+
+    public function setEmployment(?bool $employment): self
+    {
+        $this->employment = $employment;
 
         return $this;
     }
