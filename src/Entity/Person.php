@@ -32,7 +32,7 @@ class Person
     private $lastName;
 
     /**
-     * @ORM\Column(type="string", length=254)
+     * @ORM\Column(type="string", length=254, unique=true)
      */
     private $email;
 

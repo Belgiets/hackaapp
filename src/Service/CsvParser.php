@@ -4,6 +4,9 @@
 namespace App\Service;
 
 
+use App\Entity\Event;
+use App\Entity\Participant;
+use App\Entity\Team;
 use App\Serializer\PersonNameConverter;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\Serializer\Serializer;
@@ -25,9 +28,10 @@ class CsvParser
 
     /**
      * @param $fileData
+     * @param Event $event
      * @return array
      */
-    public function parse($fileData) {
+    public function parse($fileData, $event) {
         $encoders = [new CsvEncoder()];
         $nameConverter = new PersonNameConverter();
         $normalizers = [new ObjectNormalizer(null, $nameConverter)];
@@ -37,12 +41,41 @@ class CsvParser
 
         $success = 0;
         foreach ($rows as $row) {
-            if ($person = $serializer->denormalize($row, Person::class)) {
-                $this->em->persist($person);
-                $this->em->flush();
+            $existingPerson = $this->em->getRepository(Person::class)
+                ->findOneBy(['email' => $row['Електронна адреса (якою ти найчастіше користуєшся)']]);
 
-                $success++;
+            //process person
+            if ($existingPerson) {
+                /** @var Person $person */
+                $person = $serializer->denormalize(
+                    $row,
+                    Person::class,
+                    'array',
+                    ['object_to_populate' => $existingPerson]
+                );
+            } else {
+                /** @var Person $person */
+                $person = $serializer->denormalize($row, Person::class);
             }
+
+            //process participant
+            $participant = new Participant($event);
+            $person->addParticipant($participant);
+
+            //process team
+            if ($teamName = empty($row["Назва команди "]) ? false : $row["Назва команди "]) {
+                // TODO: repository method to find team by name and event
+                if ($team = $this->em->getRepository(Team::class)->findOneBy(['name' => $teamName])) {
+
+                } else {
+                    $team = new Team();
+                }
+            }
+
+            $this->em->persist($person);
+            $this->em->flush();
+
+            $success++;
         }
 
         return [

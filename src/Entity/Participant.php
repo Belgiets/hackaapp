@@ -41,6 +41,12 @@ class Participant
      */
     private $team;
 
+    public function __construct($event)
+    {
+        $this->isActive = false;
+        $this->event = $event;
+    }
+
     public function getId()
     {
         return $this->id;
