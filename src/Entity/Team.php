@@ -36,9 +36,11 @@ class Team
      */
     private $participants;
 
-    public function __construct()
+    public function __construct($name, $event)
     {
         $this->participants = new ArrayCollection();
+        $this->name = $name;
+        $this->event = $event;
     }
 
     public function getId()

@@ -21,11 +21,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 class ParseCsvController extends Controller
 {
     /**
+     * @Route("/parse", name="parse_csv")
+     *
      * @param Request $request
      * @param CsvParser $parser
      * @return \Symfony\Component\HttpFoundation\Response
-     *
-     * @Route("/parse", name="parse_csv")
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function parseCsv(Request $request, CsvParser $parser)
     {

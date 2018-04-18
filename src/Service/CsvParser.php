@@ -21,15 +21,17 @@ class CsvParser
     /**
      * CsvParser constructor.
      */
-    public function __construct(ManagerRegistry $manager)
+    public function __construct(ManagerRegistry $doctrine)
     {
-        $this->em = $manager->getManager();
+        $this->em = $doctrine->getManager();
     }
 
     /**
      * @param $fileData
      * @param Event $event
      * @return array
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function parse($fileData, $event) {
         $encoders = [new CsvEncoder()];
@@ -62,17 +64,24 @@ class CsvParser
             $participant = new Participant($event);
             $person->addParticipant($participant);
 
+            $this->em->persist($person);
+            $this->em->flush();
+
             //process team
             if ($teamName = empty($row["Назва команди "]) ? false : $row["Назва команди "]) {
-                // TODO: repository method to find team by name and event
-                if ($team = $this->em->getRepository(Team::class)->findOneBy(['name' => $teamName])) {
+                $team = $this->em->getRepository(Team::class)->findByNameAndEvent($teamName, $event);
 
-                } else {
-                    $team = new Team();
+                if (!$team) {
+                    $team = new Team($teamName, $event);
                 }
+
+                $this->em->persist($team);
+                $this->em->flush();
+
+                $participant->setTeam($team);
             }
 
-            $this->em->persist($person);
+            $this->em->persist($participant);
             $this->em->flush();
 
             $success++;
