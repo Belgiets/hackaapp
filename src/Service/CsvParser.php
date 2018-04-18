@@ -62,10 +62,6 @@ class CsvParser
 
             //process participant
             $participant = new Participant($event);
-            $person->addParticipant($participant);
-
-            $this->em->persist($person);
-            $this->em->flush();
 
             //process team
             if ($teamName = empty($row["Назва команди "]) ? false : $row["Назва команди "]) {
@@ -82,6 +78,11 @@ class CsvParser
             }
 
             $this->em->persist($participant);
+            $this->em->flush();
+
+            $person->addParticipant($participant);
+
+            $this->em->persist($person);
             $this->em->flush();
 
             $success++;
