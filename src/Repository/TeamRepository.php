@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Event;
 use App\Entity\Team;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
@@ -17,6 +18,23 @@ class TeamRepository extends ServiceEntityRepository
     public function __construct(RegistryInterface $registry)
     {
         parent::__construct($registry, Team::class);
+    }
+
+    /**
+     * @param string $name
+     * @param Event $event
+     * @return mixed
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findByNameAndEvent($name, $event)
+    {
+        return $this->createQueryBuilder('t')
+            ->where('t.event = :event_id')->setParameter('event_id', $event->getId())
+            ->andWhere('t.name = :name')->setParameter('name', $name)
+            ->getQuery()
+            ->getOneOrNullResult()
+            ;
     }
 
 //    /**

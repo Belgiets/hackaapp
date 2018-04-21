@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block header %}
+    <header></header>
+{% endblock %}
+
+{% block flash %}
+    {% if app.session.flashBag.keys is defined and app.session.flashBag.keys|length > 0 %}
+        <div class="flash-block">
+            {% for flashType in app.session.flashbag.keys %}
+                {% for flash in app.session.flashbag.get(flashType) %}
+                    <div class="alert alert-{{ flashType }}">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        {{ flash|raw }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    {{ block('header') }}
+    <div class="content">
+        {{ block('flash') }}
+        {% block content %}
+        {% endblock %}
+    </div>
+{% endblock %}
