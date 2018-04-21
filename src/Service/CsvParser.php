@@ -60,8 +60,12 @@ class CsvParser
                 $person = $serializer->denormalize($row, Person::class);
             }
 
+            $this->em->persist($person);
+            $this->em->flush();
+
             //process participant
             $participant = new Participant($event);
+            $participant->setPerson($person);
 
             //process team
             if ($teamName = empty($row["Назва команди "]) ? false : $row["Назва команди "]) {
@@ -78,11 +82,6 @@ class CsvParser
             }
 
             $this->em->persist($participant);
-            $this->em->flush();
-
-            $person->addParticipant($participant);
-
-            $this->em->persist($person);
             $this->em->flush();
 
             $success++;

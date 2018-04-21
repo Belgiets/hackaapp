@@ -30,10 +30,10 @@ class TeamRepository extends ServiceEntityRepository
     public function findByNameAndEvent($name, $event)
     {
         return $this->createQueryBuilder('t')
-            ->where('t.event_id = :event_id')->setParameter('event_id', $event->getId())
+            ->where('t.event = :event_id')->setParameter('event_id', $event->getId())
             ->andWhere('t.name = :name')->setParameter('name', $name)
             ->getQuery()
-            ->getSingleResult()
+            ->getOneOrNullResult()
             ;
     }
 
