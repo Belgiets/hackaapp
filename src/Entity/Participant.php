@@ -41,6 +41,11 @@ class Participant
      */
     private $team;
 
+    /**
+     * @ORM\Column(type="string", length=32)
+     */
+    private $activationCode;
+
     public function __construct($event)
     {
         $this->isActive = false;
@@ -52,14 +57,21 @@ class Participant
         return $this->id;
     }
 
-    public function getIsActive(): ?bool
+    public function isActive(): ?bool
     {
         return $this->isActive;
     }
 
-    public function setIsActive(bool $isActive): self
+    public function activate()
     {
-        $this->isActive = $isActive;
+        $this->isActive = true;
+
+        return $this;
+    }
+
+    public function deactivate()
+    {
+        $this->isActive = false;
 
         return $this;
     }
@@ -96,6 +108,18 @@ class Participant
     public function setTeam(?Team $team): self
     {
         $this->team = $team;
+
+        return $this;
+    }
+
+    public function getActivationCode(): ?string
+    {
+        return $this->activationCode;
+    }
+
+    public function setActivationCode(string $activationCode): self
+    {
+        $this->activationCode = $activationCode;
 
         return $this;
     }

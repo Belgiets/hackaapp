@@ -1,0 +1,12 @@
+{% extends 'layout.html.twig' %}
+
+{% block content %}
+    <h2>
+        status - {{ status }}
+    </h2>
+    <ul>
+        <li>person - {{ participant.person.firstName ~ ' ' ~ participant.person.lastName }}</li>
+        <li>event - {{ participant.event.title }}</li>
+        <li>team - {{ participant.team.name }}</li>
+    </ul>
+{% endblock %}
