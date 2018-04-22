@@ -16,22 +16,30 @@ use App\Entity\Person;
 
 class CsvParser
 {
+    /**
+     * @var \Doctrine\Common\Persistence\ObjectManager
+     */
     private $em;
+
+    /**
+     * @var string
+     */
+    private $token;
 
     /**
      * CsvParser constructor.
      */
-    public function __construct(ManagerRegistry $doctrine)
+    public function __construct(ManagerRegistry $doctrine, string $token)
     {
         $this->em = $doctrine->getManager();
+        $this->token = $token;
     }
 
     /**
      * @param $fileData
      * @param Event $event
      * @return array
-     * @throws \Doctrine\ORM\NoResultException
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws \Exception
      */
     public function parse($fileData, $event) {
         $encoders = [new CsvEncoder()];
@@ -67,6 +75,8 @@ class CsvParser
             $participant = new Participant($event);
             $participant->setPerson($person);
 
+            $participant->setActivationCode($this->generateCode($person->getEmail()));
+
             //process team
             if ($teamName = empty($row["Назва команди "]) ? false : $row["Назва команди "]) {
                 $team = $this->em->getRepository(Team::class)->findByNameAndEvent($teamName, $event);
@@ -91,5 +101,16 @@ class CsvParser
             'success' => $success,
             'error' => 'message'
         ];
+    }
+
+    /**
+     * generate activation code
+     *
+     * @return string
+     * @throws \Exception
+     */
+    private function generateCode($str)
+    {
+        return md5($this->token . md5($str));
     }
 }

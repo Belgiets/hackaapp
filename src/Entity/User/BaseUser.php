@@ -101,20 +101,23 @@ abstract class BaseUser implements UserInterface, \Serializable
         $this->email = $email;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getisActive()
+    public function isActive(): ?bool
     {
         return $this->isActive;
     }
 
-    /**
-     * @param mixed $isActive
-     */
-    public function setIsActive($isActive): void
+    public function activate()
     {
-        $this->isActive = $isActive;
+        $this->isActive = true;
+
+        return $this;
+    }
+
+    public function deactivate()
+    {
+        $this->isActive = false;
+
+        return $this;
     }
 
     /**
