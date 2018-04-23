@@ -57,10 +57,12 @@
                 <div class="avatar">
                     <i class="fa fa-4x fa-user"></i>
                 </div>
-                <div class="title">
-                    <p><strong>{{ app.user.email }}</strong></p>
-                    <p>Admin</p>
-                </div>
+                {% if app.user %}
+                    <div class="title">
+                        <p><strong>{{ app.user.email }}</strong></p>
+                        <p>Admin</p>
+                    </div>
+                {% endif %}
             </div>
             <!-- Sidebar Navidation Menus-->
             <ul class="list-unstyled">
