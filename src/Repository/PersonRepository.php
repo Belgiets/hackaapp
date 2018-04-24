@@ -19,6 +19,10 @@ class PersonRepository extends ServiceEntityRepository
         parent::__construct($registry, Person::class);
     }
 
+    public function getAll()
+    {
+        return $this->createQueryBuilder('p')->getQuery();
+    }
 //    /**
 //     * @return Person[] Returns an array of Person objects
 //     */

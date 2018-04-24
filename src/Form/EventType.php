@@ -16,7 +16,7 @@ class EventType extends AbstractType
             ->add('title')
             ->add('startDate')
             ->add('endDate')
-            ->add('save', SubmitType::class, ['label' => 'Save'])
+            ->add('save', SubmitType::class, ['label' => 'Save', 'attr' => ['class' => 'btn btn-primary']])
         ;
     }
 

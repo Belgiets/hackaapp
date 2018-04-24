@@ -4,7 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\User\AdminUser;
 use App\Form\AdminUserType;
-use Knp\Component\Pager\PaginatorInterface;
+use App\Helper\PaginatorTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -21,18 +21,7 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
  */
 class AdminUserController extends Controller
 {
-    /**
-     * @var PaginatorInterface
-     */
-    private $paginator;
-
-    /**
-     * AdminUserController constructor.
-     */
-    public function __construct(PaginatorInterface $paginator)
-    {
-        $this->paginator = $paginator;
-    }
+    use PaginatorTrait;
 
     /**
      * @Route("", name="admin_list")
@@ -79,6 +68,7 @@ class AdminUserController extends Controller
             [
                 'form'  => $form->createView(),
                 'title' => 'New admin user',
+                'home_path' => 'admin_list'
             ]
         );
     }
@@ -94,7 +84,6 @@ class AdminUserController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $em->persist($admin);
             $em->flush();
 
             return $this->redirectToRoute('admin_list');
@@ -104,8 +93,8 @@ class AdminUserController extends Controller
             'admin/newEditSimple.html.twig',
             [
                 'form'  => $form->createView(),
-                'edit'  => true,
                 'title' => 'Edit admin user',
+                'home_path' => 'admin_list'
             ]
         );
     }
@@ -122,5 +111,4 @@ class AdminUserController extends Controller
 
         return $this->redirectToRoute('admin_list');
     }
-
 }
