@@ -74,7 +74,7 @@ abstract class BaseUser implements UserInterface, \Serializable
 
     public function __construct()
     {
-        $this->setIsActive(true);
+        $this->activate();
     }
 
     /**
@@ -155,7 +155,7 @@ abstract class BaseUser implements UserInterface, \Serializable
     /**
      * @return string
      */
-    public function getPlainPassword(): string
+    public function getPlainPassword()
     {
         return $this->plainPassword;
     }
@@ -166,6 +166,7 @@ abstract class BaseUser implements UserInterface, \Serializable
     public function setPlainPassword(string $plainPassword): void
     {
         $this->plainPassword = $plainPassword;
+        $this->password = null;
     }
 
     /**
@@ -250,7 +251,7 @@ abstract class BaseUser implements UserInterface, \Serializable
 
     public function eraseCredentials()
     {
-        // TODO: Implement eraseCredentials() method.
+        $this->plainPassword = null;
     }
 
 }

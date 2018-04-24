@@ -19,6 +19,11 @@ class AdminUserRepository extends ServiceEntityRepository
         parent::__construct($registry, AdminUser::class);
     }
 
+    public function getAll()
+    {
+        return $this->createQueryBuilder('u')->getQuery();
+    }
+
 //    /**
 //     * @return AdminUser[] Returns an array of AdminUser objects
 //     */

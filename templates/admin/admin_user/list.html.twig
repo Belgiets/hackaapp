@@ -1,0 +1,64 @@
+{% extends 'layout.html.twig' %}
+
+{% block content %}
+    <!-- Page Header-->
+    <div class="page-header no-margin-bottom">
+        <div class="container-fluid">
+            <h2 class="h5 no-margin-bottom">
+                {{ title }}
+                <a href="{{ path('admin_new') }}" class="btn btn-primary ml-3">Add new</a>
+            </h2>
+        </div>
+    </div>
+    <!-- Breadcrumb-->
+    <div class="container-fluid">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('event_list') }}">Home</a></li>
+            <li class="breadcrumb-item active">{{ title }}</li>
+        </ul>
+    </div>
+    <section class="no-padding-top">
+        <div class="container-fluid">
+            <div class="block margin-bottom-sm">
+                {% if not adminUsers is empty %}
+                    <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Email</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for user in adminUsers %}
+                            <tr>
+                                <th scope="row">{{ loop.index }}</th>
+                                <td>{{ user.email }}</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="{{ path('admin_edit', {'id': user.id}) }}"
+                                           class="btn btn-sm btn-outline-secondary">
+                                            Edit
+                                        </a>
+                                        <a href="{{ path('admin_delete', {'id': user.id}) }}"
+                                           class="btn btn-sm btn-outline-secondary">
+                                            Delete
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <div class="pagination-wrapper">
+                        {{ knp_pagination_render(adminUsers) }}
+                    </div>
+                </div>
+                {% else %}
+                    {% include('admin/noItems.html.twig') %}
+                {% endif %}
+            </div>
+        </div>
+    </section>
+{% endblock %}
