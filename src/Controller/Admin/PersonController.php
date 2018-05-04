@@ -2,109 +2,123 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\Event;
-use App\Form\EventType;
+use App\Entity\Person;
+use App\Form\PersonType;
 use App\Helper\PaginatorTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 /**
- * Class EventController
+ * Class PersonController
  * @package App\Controller\Admin
  *
- * @Route("/admin/event")
+ * @Route("/admin/person")
  */
-class EventController extends Controller
+class PersonController extends Controller
 {
     use PaginatorTrait;
 
     /**
-     * @Route("", name="event_list")
+     * @Route("", name="person_list")
      * @Method({"GET"})
      */
     public function listAction(Request $request)
     {
-        $events = $this->paginator->paginate(
-            $this->getDoctrine()->getRepository(Event::class)->getAll(),
+        $persons = $this->paginator->paginate(
+            $this->getDoctrine()->getRepository(Person::class)->getAll(),
             $request->query->getInt('page', 1),
             $this->getParameter('knp_paginator.page_range')
         );
 
         return $this->render(
-            'admin/event/listEvents.html.twig',
+            'admin/person/listPersons.html.twig',
             [
-                'title' => 'Events',
-                'items' => $events
+                'title' => 'Persons',
+                'items' => $persons
             ]
         );
     }
 
     /**
-     * @Route("/new", name="event_new")
+     * @Route("/{id}/view", name="person_view")
+     * @Method({"GET"})
+     */
+    public function viewAction(Person $person)
+    {
+        return $this->render(
+            'admin/person/viewPerson.html.twig',
+            [
+                'person' => $person
+            ]
+        );
+    }
+
+    /**
+     * @Route("/new", name="person_new")
      * @Method({"GET", "POST"})
      */
     public function newAction(Request $request)
     {
-        $event = new Event();
-        $form = $this->createForm(EventType::class, $event);
+        $person = new Person();
+        $form = $this->createForm(PersonType::class, $person);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $em->persist($event);
+            $em->persist($person);
             $em->flush();
 
-            return $this->redirectToRoute('event_list');
+            return $this->redirectToRoute('person_list');
         }
 
         return $this->render(
             'admin/newEditSimple.html.twig',
             [
                 'form' => $form->createView(),
-                'title' => 'New event',
-                'home_path' => 'event_list'
+                'title' => 'New person',
+                'home_path' => 'person_list'
             ]
         );
     }
 
     /**
-     * @Route("/{id}/edit", name="event_edit")
+     * @Route("/{id}/edit", name="person_edit")
      * @Method({"GET", "POST"})
      */
-    public function editAction(Request $request, Event $event)
+    public function editAction(Request $request, Person $person)
     {
-        $form = $this->createForm(EventType::class, $event, ['edit' => true]);
+        $form = $this->createForm(PersonType::class, $person, ['edit' => true]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->flush();
 
-            return $this->redirectToRoute('event_list');
+            return $this->redirectToRoute('person_list');
         }
 
         return $this->render(
             'admin/newEditSimple.html.twig',
             [
                 'form' => $form->createView(),
-                'title' => 'Edit event',
-                'home_path' => 'event_list'
+                'title' => 'Edit person',
+                'home_path' => 'person_list'
             ]
         );
     }
 
     /**
-     * @Route("/{id}/delete", name="event_delete")
+     * @Route("/{id}/delete", name="person_delete")
      * @Method({"GET", "POST"})
      */
-    public function deleteAction(Request $request, Event $event)
+    public function deleteAction(Request $request, Person $event)
     {
         $em = $this->getDoctrine()->getManager();
         $em->remove($event);
         $em->flush();
 
-        return $this->redirectToRoute('event_list');
+        return $this->redirectToRoute('person_list');
     }
 }

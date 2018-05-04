@@ -24,7 +24,6 @@ class TeamRepository extends ServiceEntityRepository
      * @param string $name
      * @param Event $event
      * @return mixed
-     * @throws \Doctrine\ORM\NoResultException
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function findByNameAndEvent($name, $event)
@@ -37,6 +36,10 @@ class TeamRepository extends ServiceEntityRepository
             ;
     }
 
+    public function getAll()
+    {
+        return $this->createQueryBuilder('t')->getQuery();
+    }
 //    /**
 //     * @return Team[] Returns an array of Team objects
 //     */

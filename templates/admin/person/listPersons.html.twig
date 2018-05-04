@@ -6,14 +6,14 @@
         <div class="container-fluid">
             <h2 class="h5 no-margin-bottom">
                 {{ title }}
-                <a href="{{ path('event_new') }}" class="btn btn-primary ml-3">Add new</a>
+                <a href="{{ path('person_new') }}" class="btn btn-primary ml-3">Add new</a>
             </h2>
         </div>
     </div>
     <!-- Breadcrumb-->
     <div class="container-fluid">
         <ul class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ path('event_list') }}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('person_list') }}">Home</a></li>
             <li class="breadcrumb-item active">{{ title }}</li>
         </ul>
     </div>
@@ -26,9 +26,11 @@
                             <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Title</th>
-                                <th>Start date</th>
-                                <th>End date</th>
+                                <th>First name</th>
+                                <th>Last name</th>
+                                <th>Email</th>
+                                <th>Phone number</th>
+                                <th>Events</th>
                                 <th>Actions</th>
                             </tr>
                             </thead>
@@ -36,16 +38,26 @@
                             {% for item in items %}
                                 <tr>
                                     <th scope="row">{{ loop.index }}</th>
-                                    <td>{{ item.title }}</td>
-                                    <td>{{ item.startDate | date }}</td>
-                                    <td>{{ item.endDate | date }}</td>
+                                    <td>{{ item.firstname }}</td>
+                                    <td>{{ item.lastname }}</td>
+                                    <td>{{ item.email }}</td>
+                                    <td>{{ item.phonenumber }}</td>
+                                    <td>
+                                        {% for participant in item.participants %}
+                                            {{ participant.event.title}}<br>
+                                        {% endfor %}
+                                    </td>
                                     <td>
                                         <div class="btn-group">
-                                            <a href="{{ path('event_edit', {'id': item.id}) }}"
+                                            <a href="{{ path('person_view', {'id': item.id}) }}"
+                                               class="btn btn-sm btn-outline-secondary">
+                                                Detail
+                                            </a>
+                                            <a href="{{ path('person_edit', {'id': item.id}) }}"
                                                class="btn btn-sm btn-outline-secondary">
                                                 Edit
                                             </a>
-                                            <a href="{{ path('event_delete', {'id': item.id}) }}"
+                                            <a href="{{ path('person_delete', {'id': item.id}) }}"
                                                class="btn btn-sm btn-outline-secondary">
                                                 Delete
                                             </a>

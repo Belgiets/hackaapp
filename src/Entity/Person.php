@@ -230,7 +230,7 @@ class Person
         return $this;
     }
 
-    public function getUnternship(): ?bool
+    public function getInternship(): ?bool
     {
         return $this->internship;
     }

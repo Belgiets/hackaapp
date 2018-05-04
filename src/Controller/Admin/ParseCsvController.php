@@ -37,7 +37,7 @@ class ParseCsvController extends Controller
                 'class' => Event::class,
                 'choice_label' => 'title'
             ])
-            ->add('parse', SubmitType::class, ['label' => 'Parse'])
+            ->add('parse', SubmitType::class, ['label' => 'Parse', 'attr' => ['class' => 'btn btn-primary']])
             ->getForm();
         ;
 
@@ -48,6 +48,7 @@ class ParseCsvController extends Controller
         }
 
         return $this->render('admin/parse_csv/parseCsv.html.twig', [
+            'title' => 'Parse CSV',
             'result' => empty($result) ? '' : $result,
             'form' => $form->createView(),
         ]);

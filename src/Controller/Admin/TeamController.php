@@ -2,109 +2,109 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\Event;
-use App\Form\EventType;
+use App\Entity\Team;
+use App\Form\TeamType;
 use App\Helper\PaginatorTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 /**
- * Class EventController
+ * Class TeamController
  * @package App\Controller\Admin
  *
- * @Route("/admin/event")
+ * @Route("/admin/team")
  */
-class EventController extends Controller
+class TeamController extends Controller
 {
     use PaginatorTrait;
 
     /**
-     * @Route("", name="event_list")
+     * @Route("", name="team_list")
      * @Method({"GET"})
      */
     public function listAction(Request $request)
     {
-        $events = $this->paginator->paginate(
-            $this->getDoctrine()->getRepository(Event::class)->getAll(),
+        $teams = $this->paginator->paginate(
+            $this->getDoctrine()->getRepository(Team::class)->getAll(),
             $request->query->getInt('page', 1),
             $this->getParameter('knp_paginator.page_range')
         );
 
         return $this->render(
-            'admin/event/listEvents.html.twig',
+            'admin/team/listTeams.html.twig',
             [
-                'title' => 'Events',
-                'items' => $events
+                'title' => 'Teams',
+                'items' => $teams
             ]
         );
     }
 
     /**
-     * @Route("/new", name="event_new")
+     * @Route("/new", name="team_new")
      * @Method({"GET", "POST"})
      */
     public function newAction(Request $request)
     {
-        $event = new Event();
-        $form = $this->createForm(EventType::class, $event);
+        $team = new Team();
+        $form = $this->createForm(TeamType::class, $team);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $em->persist($event);
+            $em->persist($team);
             $em->flush();
 
-            return $this->redirectToRoute('event_list');
+            return $this->redirectToRoute('team_list');
         }
 
         return $this->render(
             'admin/newEditSimple.html.twig',
             [
                 'form' => $form->createView(),
-                'title' => 'New event',
-                'home_path' => 'event_list'
+                'title' => 'New team',
+                'home_path' => 'team_list'
             ]
         );
     }
 
     /**
-     * @Route("/{id}/edit", name="event_edit")
+     * @Route("/{id}/edit", name="team_edit")
      * @Method({"GET", "POST"})
      */
-    public function editAction(Request $request, Event $event)
+    public function editAction(Request $request, Team $team)
     {
-        $form = $this->createForm(EventType::class, $event, ['edit' => true]);
+        $form = $this->createForm(TeamType::class, $team, ['edit' => true]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->flush();
 
-            return $this->redirectToRoute('event_list');
+            return $this->redirectToRoute('team_list');
         }
 
         return $this->render(
             'admin/newEditSimple.html.twig',
             [
                 'form' => $form->createView(),
-                'title' => 'Edit event',
-                'home_path' => 'event_list'
+                'title' => 'Edit team',
+                'home_path' => 'team_list'
             ]
         );
     }
 
     /**
-     * @Route("/{id}/delete", name="event_delete")
+     * @Route("/{id}/delete", name="team_delete")
      * @Method({"GET", "POST"})
      */
-    public function deleteAction(Request $request, Event $event)
+    public function deleteAction(Request $request, Team $team)
     {
         $em = $this->getDoctrine()->getManager();
-        $em->remove($event);
+        $em->remove($team);
         $em->flush();
 
-        return $this->redirectToRoute('event_list');
+        return $this->redirectToRoute('team_list');
     }
 }

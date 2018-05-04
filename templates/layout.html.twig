@@ -69,8 +69,15 @@
                 {% set menu = [
                     ['event_list', 'Events', 'fa fa-calendar-o'],
                     ['parse_csv', 'Parse csv', 'icon-grid'],
-
+                    ['team_list', 'Teams', 'icon-grid'],
+                    ['person_list', 'Persons', 'icon-grid']
                 ] %}
+
+                {% if is_granted('ROLE_SUPER_ADMIN') %}
+                    {% set menu = menu|merge([
+                        ['admin_list', 'Administrators', 'fa fa-user']
+                    ]) %}
+                {% endif %}
 
                 {% for menuItem in menu %}
                     {% set active = (app.request.get('_route') == menuItem[0]) ? 'active' : '' %}
@@ -101,11 +108,6 @@
         </nav>
         <!-- Sidebar Navigation end-->
         <div class="page-content">
-            <div class="page-header">
-                <div class="container-fluid">
-                    <h2 class="h5 no-margin-bottom">Dashboard</h2>
-                </div>
-            </div>
             {{ block('flash') }}
             {% block content %}
             {% endblock %}

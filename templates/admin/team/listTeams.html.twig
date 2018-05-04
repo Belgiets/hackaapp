@@ -2,18 +2,18 @@
 
 {% block content %}
     <!-- Page Header-->
-    <div class="page-header no-margin-bottom">
+    <div class="page-header no-margin-bottom" xmlns="http://www.w3.org/1999/html">
         <div class="container-fluid">
             <h2 class="h5 no-margin-bottom">
                 {{ title }}
-                <a href="{{ path('event_new') }}" class="btn btn-primary ml-3">Add new</a>
+                <a href="{{ path('team_new') }}" class="btn btn-primary ml-3">Add new</a>
             </h2>
         </div>
     </div>
     <!-- Breadcrumb-->
     <div class="container-fluid">
         <ul class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ path('event_list') }}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('team_list') }}">Home</a></li>
             <li class="breadcrumb-item active">{{ title }}</li>
         </ul>
     </div>
@@ -26,9 +26,9 @@
                             <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Title</th>
-                                <th>Start date</th>
-                                <th>End date</th>
+                                <th>Name</th>
+                                <th>Event</th>
+                                <th>Teammates</th>
                                 <th>Actions</th>
                             </tr>
                             </thead>
@@ -36,16 +36,22 @@
                             {% for item in items %}
                                 <tr>
                                     <th scope="row">{{ loop.index }}</th>
-                                    <td>{{ item.title }}</td>
-                                    <td>{{ item.startDate | date }}</td>
-                                    <td>{{ item.endDate | date }}</td>
+                                    <td>{{ item.name }}</td>
+                                    <td>{{ item.event.title }}</td>
+                                    <td>
+                                        {% for participant in item.participants %}
+                                            <a href="{{ path('person_view', {'id': participant.person.id}) }}">
+                                                {{ participant.person.firstname~' '~participant.person.lastname}}
+                                            </a><br>
+                                        {% endfor %}
+                                    </td>
                                     <td>
                                         <div class="btn-group">
-                                            <a href="{{ path('event_edit', {'id': item.id}) }}"
+                                            <a href="{{ path('team_edit', {'id': item.id}) }}"
                                                class="btn btn-sm btn-outline-secondary">
                                                 Edit
                                             </a>
-                                            <a href="{{ path('event_delete', {'id': item.id}) }}"
+                                            <a href="{{ path('team_delete', {'id': item.id}) }}"
                                                class="btn btn-sm btn-outline-secondary">
                                                 Delete
                                             </a>
