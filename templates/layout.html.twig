@@ -68,7 +68,9 @@
             <ul class="list-unstyled">
                 {% set menu = [
                     ['event_list', 'Events', 'fa fa-calendar-o'],
-                    ['parse_csv', 'Parse csv', 'icon-grid']
+                    ['parse_csv', 'Parse csv', 'icon-grid'],
+                    ['team_list', 'Teams', 'icon-grid'],
+                    ['person_list', 'Persons', 'icon-grid']
                 ] %}
 
                 {% if is_granted('ROLE_SUPER_ADMIN') %}

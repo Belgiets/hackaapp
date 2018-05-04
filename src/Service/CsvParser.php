@@ -82,7 +82,9 @@ class CsvParser
                 $team = $this->em->getRepository(Team::class)->findByNameAndEvent($teamName, $event);
 
                 if (!$team) {
-                    $team = new Team($teamName, $event);
+                    $team = new Team();
+                    $team->setName($teamName);
+                    $team->setEvent($event);
                 }
 
                 $this->em->persist($team);
