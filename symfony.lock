@@ -107,6 +107,9 @@
     "knplabs/knp-paginator-bundle": {
         "version": "v2.7.2"
     },
+    "mailin-api/mailin-api-php": {
+        "version": "v1.0.7"
+    },
     "monolog/monolog": {
         "version": "1.23.0"
     },

@@ -30,3 +30,8 @@ services:
     App\Service\CsvParser:
         arguments:
             $token: '%env(APP_SECRET)%'
+
+    App\Service\Notification:
+        arguments:
+            $from: '%env(SB_FROM)%'
+            $apiKey: '%env(SB_API_KEY)%'
