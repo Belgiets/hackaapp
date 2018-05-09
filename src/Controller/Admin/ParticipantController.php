@@ -3,13 +3,17 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Participant;
+use App\Entity\Person;
+use App\Helper\PaginatorTrait;
+use App\Repository\ParticipantRepository;
+use App\Service\Notification;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\HttpFoundation\Request;
-
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 /**
  * Class ParticipantController
@@ -19,7 +23,30 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class ParticipantController extends Controller
 {
+    use PaginatorTrait;
+
     const ACTIVATION_PARAM = 'code';
+
+    /**
+     * @Route("", name="participant_list")
+     * @Method({"GET"})
+     */
+    public function listAction(Request $request, ParticipantRepository $repository)
+    {
+        $participants = $this->paginator->paginate(
+            $repository->getAll(),
+            $request->query->getInt('page', 1),
+            $this->getParameter('knp_paginator.page_range')
+        );
+
+        return $this->render(
+            'admin/participant/listParticipants.html.twig',
+            [
+                'title' => 'Participants',
+                'items' => $participants
+            ]
+        );
+    }
 
     /**
      * @Route("/activate", name="participant_activate")
@@ -56,18 +83,50 @@ class ParticipantController extends Controller
     }
 
     /**
-     * @Route("/{id}/activation-link", name="participant_activate_link")
+     * @Route("/notify", name="participant_notify")
+     * @Method({"GET", "POST"})
+     *
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
      */
-    public function activationLink(Participant $participant)
+    public function notifyAction(Request $request, ParticipantRepository $repository, Notification $notification)
     {
-        $url = $this->generateUrl(
-            'participant_activate',
-            [self::ACTIVATION_PARAM => $participant->getActivationCode()],
-            UrlGeneratorInterface::ABSOLUTE_URL
-        );
+        $form = $this->createFormBuilder()
+            ->setMethod('POST')
+            ->setAction($this->generateUrl('participant_notify'))
+            ->add('participants', HiddenType::class)
+            ->getForm();
 
-        return $this->render('admin/participant/activate-link.html.twig', [
-            'url' => $url
+        if ($request->getMethod() == Request::METHOD_GET) {
+            return $this->render('admin/participant/notifyForm.html.twig', [
+                'form' => $form->createView(),
+            ]);
+        }
+
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            $participantsIds = json_decode($form['participants']->getData());
+
+            foreach ($participantsIds as $participantId) {
+                /** @var Participant $participant */
+                $participant = $repository->findOneBy(['id' => $participantId]);
+
+                $notification->notify($participant->getEvent()->getTitle(), $participant);
+                $participant->setIsNotified(true);
+
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($participant);
+                $em->flush();
+            }
+
+            return $this->redirectToRoute('participant_list');
+        }
+
+        return $this->render('admin/participant/notifyForm.html.twig', [
+            'form' => $form->createView(),
         ]);
     }
 }
