@@ -95,7 +95,7 @@ class Notification
                                 'emails/hackaton.html.twig',
                                 [
                                     'person' => $person,
-                                    'url' => $this->generateUrl($participant)
+                                    'qr_url' => $participant->getActivationQr()->getUrl()
                                 ]
                             ),
                         ]
@@ -110,14 +110,5 @@ class Notification
         } catch (SesException $error) {
             $this->logger->error($error->getAwsErrorMessage());
         }
-    }
-
-    private function generateUrl(Participant $participant)
-    {
-        return $this->generator->generate(
-            'participant_activate',
-            [ParticipantController::ACTIVATION_PARAM => $participant->getActivationCode()],
-            UrlGeneratorInterface::ABSOLUTE_URL
-        );
     }
 }

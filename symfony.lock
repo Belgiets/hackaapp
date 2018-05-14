@@ -92,6 +92,9 @@
             "ref": "b9fcbe18b537c63bf61d3c3be8116a00a85c8e2e"
         }
     },
+    "endroid/qrcode": {
+        "version": "3.2.12"
+    },
     "fig/link-util": {
         "version": "1.0.0"
     },
