@@ -46,9 +46,15 @@ class Participant
      */
     private $activationCode;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isNotified;
+
     public function __construct($event)
     {
         $this->isActive = false;
+        $this->isNotified = false;
         $this->event = $event;
     }
 
@@ -120,6 +126,18 @@ class Participant
     public function setActivationCode(string $activationCode): self
     {
         $this->activationCode = $activationCode;
+
+        return $this;
+    }
+
+    public function getIsNotified(): ?bool
+    {
+        return $this->isNotified;
+    }
+
+    public function setIsNotified(bool $isNotified): self
+    {
+        $this->isNotified = $isNotified;
 
         return $this;
     }

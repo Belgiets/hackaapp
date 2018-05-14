@@ -1,0 +1,85 @@
+{% extends 'layout.html.twig' %}
+
+{% block content %}
+    <!-- Page Header-->
+    <div class="page-header no-margin-bottom">
+        <div class="container-fluid">
+            <h2 class="h5 no-margin-bottom">
+                {{ title }}
+                <button id="approve-notification-btn" type="button" data-toggle="modal"
+                        data-target="#approve-notification-modal"
+                        class="btn btn-primary ml-2 d-none">Notify</button>
+                <!-- Modal-->
+                <div id="approve-notification-modal"
+                     tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                     aria-hidden="true" class="modal fade text-left">
+                    <div role="document" class="modal-dialog">
+                        <div class="modal-content">
+                            {{ render(controller(
+                                'App\\Controller\\Admin\\ParticipantController::notifyAction'
+                            )) }}
+                        </div>
+                    </div>
+                </div>
+            </h2>
+        </div>
+    </div>
+    <!-- Breadcrumb-->
+    <div class="container-fluid">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('participant_list') }}">Home</a></li>
+            <li class="breadcrumb-item active">{{ title }}</li>
+        </ul>
+    </div>
+    <section class="no-padding-top">
+        <div class="container-fluid">
+            <div class="block margin-bottom-sm">
+                {% if not items is empty %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>
+                                    <input id="notify-all" type="checkbox" value="" class="checkbox-template">
+                                    <span class="ml-1">Notify</span>
+                                </th>
+                                <th>Event</th>
+                                <th>First name</th>
+                                <th>Last name</th>
+                                <th>Email</th>
+                                <th>Phone number</th>
+                                <th>Notified</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for item in items %}
+                                <tr>
+                                    <th scope="row">{{ loop.index }}</th>
+                                    <td>
+                                        <input data-id="{{ item.id }}" type="checkbox" value=""
+                                               class="checkbox-template -notify">
+                                    </td>
+                                    <td>{{ item.event.title }}</td>
+                                    <td>{{ item.person.firstname }}</td>
+                                    <td>{{ item.person.lastname }}</td>
+                                    <td>{{ item.person.email }}</td>
+                                    <td>{{ item.person.phonenumber }}</td>
+                                    <td>
+                                        {{ item.isNotified ? 'Yes' : 'No' }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <div class="pagination-wrapper">
+                            {{ knp_pagination_render(items) }}
+                        </div>
+                    </div>
+                {% else %}
+                    {% include('admin/noItems.html.twig') %}
+                {% endif %}
+            </div>
+        </div>
+    </section>
+{% endblock %}
