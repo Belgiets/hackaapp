@@ -74,7 +74,7 @@ class PersonController extends Controller
         }
 
         return $this->render(
-            'admin/newEditSimple.html.twig',
+            'admin/person/newEditPerson.html.twig',
             [
                 'form' => $form->createView(),
                 'title' => 'New person',
@@ -100,11 +100,12 @@ class PersonController extends Controller
         }
 
         return $this->render(
-            'admin/newEditSimple.html.twig',
+            'admin/person/newEditPerson.html.twig',
             [
                 'form' => $form->createView(),
                 'title' => 'Edit person',
-                'home_path' => 'person_list'
+                'home_path' => 'person_list',
+                'person' => $person
             ]
         );
     }

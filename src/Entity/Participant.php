@@ -47,7 +47,6 @@ class Participant
     private $activationCode;
 
     /**
-     * @var string
      * @ORM\OneToOne(
      *     targetEntity="Media",
      *      cascade={"persist", "remove"},

@@ -48,6 +48,11 @@ services:
             $rootDir: '%kernel.root_dir%'
             $folderQr: '%env(FOLDER_QR)%'
 
+    App\Form\MediaType:
+        arguments:
+            $rootDir: '%kernel.root_dir%'
+            $folderPerson: '%env(FOLDER_PERSON)%'
+
     App\Service\Notification:
         arguments:
             $from: '%env(SB_FROM)%'
