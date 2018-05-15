@@ -2,8 +2,10 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Media;
 use App\Entity\Participant;
 use App\Entity\Person;
+use App\Form\MediaType;
 use App\Helper\PaginatorTrait;
 use App\Repository\ParticipantRepository;
 use App\Service\Notification;
@@ -60,6 +62,17 @@ class ParticipantController extends Controller
             $participant = $em->getRepository(Participant::class)->findOneBy(['activationCode' => $code]);
 
             if ($participant) {
+                $person = $participant->getPerson();
+                $photo = $person->getPhoto() ? $participant->getPerson()->getPhoto() : new Media();
+
+                $form = $this->createForm(MediaType::class, $photo, ['edit' => true]);
+                $form->handleRequest($request);
+
+                if ($form->isSubmitted() && $form->isValid()) {
+                    $em->persist($person);
+                    $em->flush();
+                }
+
                 if ($participant->isActive()) {
                     $status = 'already activated';
                 } else {
@@ -72,7 +85,8 @@ class ParticipantController extends Controller
 
                 return $this->render('admin/participant/activate.html.twig', [
                     'status' => $status,
-                    'participant' => $participant
+                    'participant' => $participant,
+                    'form' => $form->createView()
                 ]);
             } else {
                 throw new NotFoundHttpException("Not valid activation code");

@@ -111,7 +111,7 @@ class CsvParser
             $participant = new Participant($event);
             $participant->setPerson($person);
 
-            $participant->setActivationCode($this->generateCode($person->getEmail()));
+            $participant->setActivationCode($this->generateCode($person->getEmail() . $participant->getEvent()->getTitle()));
 
             if ($url = $this->generateQrCode($participant)) {
                 $media = new Media();

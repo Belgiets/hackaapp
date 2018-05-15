@@ -49,24 +49,8 @@
                         </div>
                     {% endif %}
                     {{ form_start(form, {attr: {class: 'form-horizontal'}}) }}
-                    {{ form_row(form._token) }}
-                    {{ form_errors(form) }}
-
-                    {{ form_row(form.photo) }}
-                    {{ form_row(form.firstName) }}
-                    {{ form_row(form.lastName) }}
-                    {{ form_row(form.email) }}
-                    {{ form_row(form.phoneNumber) }}
-                    {{ form_row(form.studyAt) }}
-                    {{ form_row(form.specialization) }}
-                    {{ form_row(form.course) }}
-                    {{ form_row(form.favorite) }}
-                    {{ form_row(form.codeSample) }}
-
-                    {{ form_row(form.internship) }}
-                    {{ form_row(form.employment) }}
-                    {{ form_row(form.save) }}
-                    {{ form_end(form, {'render_rest': false}) }}
+                    {{ form_widget(form) }}
+                    {{ form_end(form) }}
                 </div>
             </div>
         </div>

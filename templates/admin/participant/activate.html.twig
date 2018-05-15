@@ -1,5 +1,26 @@
 {% extends 'layout.html.twig' %}
 
+{% form_theme form _self %}
+
+{% block form_row -%}
+    {%- set type = type|default('text') -%}
+
+    {%- if expanded is defined and expanded -%}
+        {{ block('fieldset_form_row') }}
+    {%- else -%}
+        {%- if type is defined and (type != 'file') %}
+            <div class="form-group row{% if (not compound or force_error|default(false)) and not valid %} is-invalid{% endif %}">
+                {{- form_label(form) -}}
+                <div class="{{ block('form_group_class') }}">
+                    {{- form_widget(form) -}}
+                </div>
+                {##}</div>
+        {% else %}
+            {{- form_widget(form) -}}
+        {% endif %}
+    {%- endif -%}
+{%- endblock form_row %}
+
 {% block content %}
     <!-- Page Header-->
     <div class="page-header no-margin-bottom">
@@ -45,6 +66,36 @@
                                 {% if participant.team is defined %}
                                     {{ participant.team }}
                                 {% endif %}
+                            </div>
+                        </div>
+                    </li>
+                    {% if participant.person.photo.url is defined %}
+                        <li class="list-group-item">
+                            <div class="row">
+                                <div class="col-12 col-sm-2"><strong>Photo:</strong></div>
+                                <div class="col-12 col-sm-10">
+                                    <div class="photo">
+                                        <img src="{{ participant.person.photo.url }}" alt="Photo" class="img-thumbnail">
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    {% endif %}
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-12 col-sm-2"><strong>Update photo:</strong></div>
+                            <div class="col-12 col-sm-10">
+                                {{ form_start(form, {attr: {class: 'form-horizontal'}}) }}
+
+                                <div class="mb-3">
+                                    {{ form_widget(form) }}
+                                </div>
+
+                                <div class="mb-3">
+                                    <button type="submit" class="btn btn-primary">Save</button>
+                                </div>
+
+                                {{ form_end(form) }}
                             </div>
                         </div>
                     </li>
