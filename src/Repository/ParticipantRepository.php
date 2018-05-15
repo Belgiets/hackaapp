@@ -2,7 +2,9 @@
 
 namespace App\Repository;
 
+use App\Entity\Event;
 use App\Entity\Participant;
+use App\Entity\Person;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
@@ -22,6 +24,24 @@ class ParticipantRepository extends ServiceEntityRepository
     public function getAll()
     {
         return $this->createQueryBuilder('p')->getQuery();
+    }
+
+    /**
+     * @param Person $person
+     * @param Event $event
+     * @return mixed
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findByPersonAndEvent($person, $event)
+    {
+        return $this->createQueryBuilder('p')
+            ->where('p.person = :person')
+            ->setParameter('person', $person->getId())
+            ->andWhere('p.event = :event')
+            ->setParameter('event', $event->getId())
+            ->getQuery()
+            ->getOneOrNullResult()
+            ;
     }
 //    /**
 //     * @return Participant[] Returns an array of Participant objects

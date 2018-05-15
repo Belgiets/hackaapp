@@ -108,7 +108,10 @@ class CsvParser
             $this->em->flush();
 
             //process participant
-            $participant = new Participant($event);
+            $existingParticipant = $this->em->getRepository(Participant::class)
+                ->findByPersonAndEvent($person, $event);
+
+            $participant = $existingParticipant ? $existingParticipant : new Participant($event);
             $participant->setPerson($person);
 
             $participant->setActivationCode($this->generateCode($person->getEmail() . $participant->getEvent()->getTitle()));
