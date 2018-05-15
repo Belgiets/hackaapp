@@ -1,3 +1,14 @@
 .login-page::before {
   background: none;
 }
+
+.participant-activate {
+  .list-group-item {
+    background-color: transparent;
+  }
+}
+
+.photo {
+  max-width: 300px;
+  max-height: 300px;
+}

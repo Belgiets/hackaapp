@@ -81,6 +81,16 @@ class Person
      */
     private $employment;
 
+    /**
+     * @ORM\OneToOne(
+     *     targetEntity="App\Entity\Media",
+     *     cascade={"persist", "remove"},
+     *     fetch="EAGER",
+     *     orphanRemoval=true
+     * )
+     */
+    private $photo;
+
     public function __construct()
     {
         $this->participants = new ArrayCollection();
@@ -252,5 +262,22 @@ class Person
         $this->employment = $employment;
 
         return $this;
+    }
+
+    public function getPhoto(): ?Media
+    {
+        return $this->photo;
+    }
+
+    public function setPhoto(?Media $photo): self
+    {
+        $this->photo = $photo;
+
+        return $this;
+    }
+
+    public function __toString()
+    {
+        return $this->firstName . ' ' . $this->lastName;
     }
 }

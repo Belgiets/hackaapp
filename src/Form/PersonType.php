@@ -22,6 +22,7 @@ class PersonType extends AbstractType
             ->add('course')
             ->add('favorite')
             ->add('codeSample')
+            ->add('photo', MediaType::class)
             ->add('internship')
             ->add('employment')
             ->add('save', SubmitType::class, ['label' => 'Save', 'attr' => ['class' => 'btn btn-primary']])

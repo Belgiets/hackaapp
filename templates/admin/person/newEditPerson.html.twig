@@ -1,0 +1,58 @@
+{% extends 'layout.html.twig' %}
+
+{% form_theme form _self %}
+
+{% block form_row -%}
+    {%- set type = type|default('text') -%}
+
+    {%- if expanded is defined and expanded -%}
+        {{ block('fieldset_form_row') }}
+    {%- else -%}
+        {%- if type is defined and (type != 'file') %}
+            <div class="form-group row{% if (not compound or force_error|default(false)) and not valid %} is-invalid{% endif %}">
+                {{- form_label(form) -}}
+                <div class="{{ block('form_group_class') }}">
+                    {{- form_widget(form) -}}
+                </div>
+                {##}</div>
+        {% else %}
+            {{- form_widget(form) -}}
+        {% endif %}
+    {%- endif -%}
+{%- endblock form_row %}
+
+{% block content %}
+    <!-- Page Header-->
+    <div class="page-header no-margin-bottom">
+        <div class="container-fluid">
+            <h2 class="h5 no-margin-bottom">{{ title }}</h2>
+        </div>
+    </div>
+    <!-- Breadcrumb-->
+    <div class="container-fluid">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path(home_path) }}">Home</a></li>
+            <li class="breadcrumb-item active">{{ title }}</li>
+        </ul>
+    </div>
+    <section class="no-padding-top">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12 col-lg-8">
+                    {%- if person is defined and person.photo is defined %}
+                        <div class="form-group row">
+                            <div class="col-12">
+                                <div class="photo">
+                                    <img src="{{ person.photo.url }}" alt="Photo" class="img-thumbnail">
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {{ form_start(form, {attr: {class: 'form-horizontal'}}) }}
+                    {{ form_widget(form) }}
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

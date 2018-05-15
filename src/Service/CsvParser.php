@@ -4,11 +4,16 @@
 namespace App\Service;
 
 
+use App\Controller\Admin\ParticipantController;
 use App\Entity\Event;
+use App\Entity\Media;
 use App\Entity\Participant;
 use App\Entity\Team;
+use App\Helper\LoggerTrait;
 use App\Serializer\PersonNameConverter;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Endroid\QrCode\QrCode;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\Encoder\CsvEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
@@ -16,6 +21,8 @@ use App\Entity\Person;
 
 class CsvParser
 {
+    use LoggerTrait;
+
     /**
      * @var \Doctrine\Common\Persistence\ObjectManager
      */
@@ -27,12 +34,41 @@ class CsvParser
     private $token;
 
     /**
+     * @var UrlGeneratorInterface
+     */
+    private $urlGenerator;
+
+    /**
+     * @var string
+     */
+    private $rootDir;
+
+    /**
+     * @var S3Service
+     */
+    private $s3Service;
+    /**
+     * @var string
+     */
+    private $folderQr;
+
+    /**
      * CsvParser constructor.
      */
-    public function __construct(ManagerRegistry $doctrine, string $token)
+    public function __construct(
+        ManagerRegistry $doctrine,
+        UrlGeneratorInterface $urlGenerator,
+        S3Service $s3Service,
+        string $token,
+        string $rootDir,
+        string $folderQr)
     {
         $this->em = $doctrine->getManager();
         $this->token = $token;
+        $this->urlGenerator = $urlGenerator;
+        $this->rootDir = $rootDir;
+        $this->s3Service = $s3Service;
+        $this->folderQr = $folderQr;
     }
 
     /**
@@ -75,7 +111,17 @@ class CsvParser
             $participant = new Participant($event);
             $participant->setPerson($person);
 
-            $participant->setActivationCode($this->generateCode($person->getEmail()));
+            $participant->setActivationCode($this->generateCode($person->getEmail() . $participant->getEvent()->getTitle()));
+
+            if ($url = $this->generateQrCode($participant)) {
+                $media = new Media();
+                $media->setUrl($url);
+
+                $this->em->persist($media);
+                $this->em->flush();
+
+                $participant->setActivationQr($media);
+            }
 
             //process team
             if ($teamName = empty($row["Назва команди "]) ? false : $row["Назва команди "]) {
@@ -100,8 +146,7 @@ class CsvParser
         }
 
         return [
-            'success' => $success,
-            'error' => 'message'
+            'success_count' => $success
         ];
     }
 
@@ -114,5 +159,49 @@ class CsvParser
     private function generateCode($str)
     {
         return md5($this->token . md5($str));
+    }
+
+    private function generateUrl(Participant $participant)
+    {
+        return $this->urlGenerator->generate(
+            'participant_activate',
+            [ParticipantController::ACTIVATION_PARAM => $participant->getActivationCode()],
+            UrlGeneratorInterface::ABSOLUTE_URL
+        );
+    }
+
+    /**
+     * @param Participant $participant
+     * @return mixed
+     * @throws \Exception
+     */
+    private function generateQrCode(Participant $participant)
+    {
+        $filesDir = "{$this->rootDir}/../var/files";
+        $personId = $participant->getPerson()->getId();
+
+        $fileName = "qrcode_{$personId}";
+        $fileName = Media::getPrefixName($fileName) . ".png";
+
+        $pathToFile = "$filesDir/$fileName";
+        $qrCode = new QrCode($this->generateUrl($participant));
+
+        if (!is_dir($filesDir)) {
+            mkdir($filesDir);
+        }
+
+        $qrCode->writeFile($pathToFile);
+
+        try {
+            $result = $this
+                ->s3Service
+                ->putFile("{$this->folderQr}/$fileName", $pathToFile, S3Service::ACL_PUBLIC_READ);
+
+            @unlink($pathToFile);
+
+            return $result['ObjectURL'];
+        } catch (\Exception $exception) {
+            $this->logger->error($exception->getMessage());
+        }
     }
 }

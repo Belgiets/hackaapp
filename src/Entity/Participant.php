@@ -47,6 +47,17 @@ class Participant
     private $activationCode;
 
     /**
+     * @ORM\OneToOne(
+     *     targetEntity="Media",
+     *      cascade={"persist", "remove"},
+     *      fetch="EAGER",
+     *      orphanRemoval=true
+     *     )
+     * @ORM\JoinColumn(name="activation_qr_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    private $activationQr;
+
+    /**
      * @ORM\Column(type="boolean")
      */
     private $isNotified;
@@ -128,6 +139,25 @@ class Participant
         $this->activationCode = $activationCode;
 
         return $this;
+    }
+
+    /**
+     * @param Media $activationQr
+     * @return Participant
+     */
+    public function setActivationQr(Media $activationQr)
+    {
+        $this->activationQr = $activationQr;
+
+        return $this;
+    }
+
+    /**
+     * @return Media
+     */
+    public function getActivationQr()
+    {
+        return $this->activationQr;
     }
 
     public function getIsNotified(): ?bool
