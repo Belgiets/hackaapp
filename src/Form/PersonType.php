@@ -20,7 +20,6 @@ class PersonType extends AbstractType
             ->add('studyAt')
             ->add('specialization')
             ->add('course')
-            ->add('favorite')
             ->add('codeSample')
             ->add('photo', MediaType::class)
             ->add('internship')
