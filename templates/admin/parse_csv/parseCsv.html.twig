@@ -20,6 +20,11 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12 col-lg-8">
+                    {{ block('flash') }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-lg-8">
                     <div class="block">
                         {{ form_start(form, {attr: {class: 'form-horizontal'}}) }}
                         {{ form_widget(form) }}

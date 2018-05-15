@@ -45,11 +45,12 @@ class ParseCsvController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $result = $parser->parse($form['csvFile']->getData(), $form['event']->getData());
+
+            $this->addFlash('success', "Imported {$result['success_count']} persons");
         }
 
         return $this->render('admin/parse_csv/parseCsv.html.twig', [
             'title' => 'Parse CSV',
-            'result' => empty($result) ? '' : $result,
             'form' => $form->createView(),
         ]);
     }

@@ -4,7 +4,6 @@ namespace App\Controller\Admin;
 
 use App\Entity\Media;
 use App\Entity\Participant;
-use App\Entity\Person;
 use App\Form\MediaType;
 use App\Helper\PaginatorTrait;
 use App\Repository\ParticipantRepository;
@@ -74,10 +73,20 @@ class ParticipantController extends Controller
                 }
 
                 if ($participant->isActive()) {
-                    $status = 'already activated';
+                    $status = 'Already activated';
+
+                    $this->addFlash(
+                        'info',
+                        $status
+                    );
                 } else {
                     $participant->activate();
-                    $status = 'activated';
+                    $status = 'Activated';
+
+                    $this->addFlash(
+                        'success',
+                        $status
+                    );
 
                     $em->persist($participant);
                     $em->flush();

@@ -146,8 +146,7 @@ class CsvParser
         }
 
         return [
-            'success' => $success,
-            'error' => 'message'
+            'success_count' => $success
         ];
     }
 
