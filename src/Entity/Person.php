@@ -64,11 +64,6 @@ class Person
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $favorite;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
     private $codeSample;
 
     /**
@@ -212,18 +207,6 @@ class Person
     public function setCourse(?string $course): self
     {
         $this->course = $course;
-
-        return $this;
-    }
-
-    public function getFavorite(): ?string
-    {
-        return $this->favorite;
-    }
-
-    public function setFavorite(?string $favorite): self
-    {
-        $this->favorite = $favorite;
 
         return $this;
     }

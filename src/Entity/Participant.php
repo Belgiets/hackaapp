@@ -62,6 +62,11 @@ class Participant
      */
     private $isNotified;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $projectType;
+
     public function __construct($event)
     {
         $this->isActive = false;
@@ -168,6 +173,18 @@ class Participant
     public function setIsNotified(bool $isNotified): self
     {
         $this->isNotified = $isNotified;
+
+        return $this;
+    }
+
+    public function getProjectType(): ?string
+    {
+        return $this->projectType;
+    }
+
+    public function setProjectType(?string $projectType): self
+    {
+        $this->projectType = $projectType;
 
         return $this;
     }

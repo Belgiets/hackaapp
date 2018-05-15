@@ -113,6 +113,7 @@ class CsvParser
 
             $participant = $existingParticipant ? $existingParticipant : new Participant($event);
             $participant->setPerson($person);
+            $participant->setProjectType($row['Який проект ти хочеш робити']);
 
             $participant->setActivationCode($this->generateCode($person->getEmail() . $participant->getEvent()->getTitle()));
 

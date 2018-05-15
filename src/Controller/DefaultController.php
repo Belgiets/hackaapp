@@ -14,6 +14,6 @@ class DefaultController extends Controller
      */
     public function indexAction()
     {
-        return new Response('<html><body>Default page!</body></html>');
+        return $this->redirectToRoute('event_list');
     }
 }
