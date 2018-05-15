@@ -26,8 +26,8 @@
                             <thead>
                             <tr>
                                 <th>#</th>
-                                <th>First name</th>
                                 <th>Last name</th>
+                                <th>First name</th>
                                 <th>Email</th>
                                 <th>Phone number</th>
                                 <th>Events</th>
@@ -38,8 +38,8 @@
                             {% for item in items %}
                                 <tr>
                                     <th scope="row">{{ loop.index }}</th>
-                                    <td>{{ item.firstname }}</td>
                                     <td>{{ item.lastname }}</td>
+                                    <td>{{ item.firstname }}</td>
                                     <td>{{ item.email }}</td>
                                     <td>{{ item.phonenumber }}</td>
                                     <td>
