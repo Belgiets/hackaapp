@@ -67,14 +67,14 @@
             <!-- Sidebar Navidation Menus-->
             <ul class="list-unstyled">
                 {% set menu = [
-                    ['event_list', 'Events', 'fa fa-calendar-o'],
-                    ['parse_csv', 'Parse csv', 'fa fa-cogs'],
                     ['team_list', 'Teams', 'fa fa-ship'],
                     ['participant_list', 'Participants', 'fa fa-users']
                 ] %}
 
                 {% if is_granted('ROLE_SUPER_ADMIN') %}
                     {% set menu = menu|merge([
+                        ['event_list', 'Events', 'fa fa-calendar-o'],
+                        ['parse_csv', 'Parse csv', 'fa fa-cogs'],
                         ['admin_list', 'Administrators', 'fa fa-user-secret']
                     ]) %}
                 {% endif %}

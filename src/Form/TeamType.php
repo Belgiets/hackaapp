@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Event;
 use App\Entity\Team;
+use App\Entity\User\AdminUser;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -16,9 +17,16 @@ class TeamType extends AbstractType
     {
         $builder
             ->add('name')
+            ->add('idea')
             ->add('event', EntityType::class, [
                 'class' => Event::class,
                 'choice_label' => 'title'
+            ])
+            ->add('mentors', EntityType::class, [
+                'class' => AdminUser::class,
+                'choice_label' => 'email',
+                'multiple' => true,
+                'expanded' => true
             ])
             ->add('save', SubmitType::class, ['label' => 'Save', 'attr' => ['class' => 'btn btn-primary']])
         ;

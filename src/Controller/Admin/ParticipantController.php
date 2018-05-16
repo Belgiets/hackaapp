@@ -15,11 +15,9 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
- * Class ParticipantController
- * @package App\Controller\Admin
- *
  * @Route("/admin/participant")
  */
 class ParticipantController extends Controller

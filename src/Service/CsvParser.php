@@ -120,8 +120,6 @@ class CsvParser
 
             if ($projectType) {
                 $participant->setProjectType($projectType);
-            } else {
-                $test = null;
             }
 
             $participant->setActivationCode($this->generateCode($person->getEmail() . $participant->getEvent()->getTitle()));
@@ -137,19 +135,21 @@ class CsvParser
             }
 
             //process team
-            if ($teamName = empty($row["Назва команди "]) ? false : $row["Назва команди "]) {
-                $team = $this->em->getRepository(Team::class)->findByNameAndEvent($teamName, $event);
+            if ($row["Чи є в тебе команда? "] === "Так") {
+                if ($teamName = empty($row["Назва команди "]) ? false : $row["Назва команди "]) {
+                    $team = $this->em->getRepository(Team::class)->findByNameAndEvent($teamName, $event);
 
-                if (!$team) {
-                    $team = new Team();
-                    $team->setName($teamName);
-                    $team->setEvent($event);
+                    if (!$team) {
+                        $team = new Team();
+                        $team->setName($teamName);
+                        $team->setEvent($event);
+                    }
+
+                    $this->em->persist($team);
+                    $this->em->flush();
+
+                    $participant->setTeam($team);
                 }
-
-                $this->em->persist($team);
-                $this->em->flush();
-
-                $participant->setTeam($team);
             }
 
             $this->em->persist($participant);

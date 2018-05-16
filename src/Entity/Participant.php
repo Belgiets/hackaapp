@@ -64,7 +64,7 @@ class Participant
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\ProjectType", inversedBy="participants")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $projectType;
 

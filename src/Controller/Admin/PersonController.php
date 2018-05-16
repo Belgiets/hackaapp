@@ -9,12 +9,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
  * Class PersonController
  * @package App\Controller\Admin
  *
  * @Route("/admin/person")
+ * @IsGranted("ROLE_SUPER_ADMIN")
  */
 class PersonController extends Controller
 {

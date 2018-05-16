@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\User\AdminUser;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -36,9 +37,20 @@ class Team
      */
     private $participants;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\User\AdminUser", inversedBy="teams")
+     */
+    private $mentors;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $idea;
+
     public function __construct()
     {
         $this->participants = new ArrayCollection();
+        $this->mentors = new ArrayCollection();
     }
 
     public function getId()
@@ -104,5 +116,43 @@ class Team
     public function __toString()
     {
         return $this->name;
+    }
+
+    /**
+     * @return Collection|AdminUser[]
+     */
+    public function getMentors(): Collection
+    {
+        return $this->mentors;
+    }
+
+    public function addMentor(AdminUser $mentor): self
+    {
+        if (!$this->mentors->contains($mentor)) {
+            $this->mentors[] = $mentor;
+        }
+
+        return $this;
+    }
+
+    public function removeMentor(AdminUser $mentor): self
+    {
+        if ($this->mentors->contains($mentor)) {
+            $this->mentors->removeElement($mentor);
+        }
+
+        return $this;
+    }
+
+    public function getIdea(): ?string
+    {
+        return $this->idea;
+    }
+
+    public function setIdea(?string $idea): self
+    {
+        $this->idea = $idea;
+
+        return $this;
     }
 }
