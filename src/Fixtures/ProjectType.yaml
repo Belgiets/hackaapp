@@ -1,0 +1,11 @@
+App\Entity\ProjectType:
+    project_type_1:
+        title: 'Desktop App'
+    project_type_2:
+        title: 'Web App'
+    project_type_3:
+        title: 'Design'
+    project_type_4:
+        title: 'Big data'
+    project_type_5:
+        title: 'Mobile App'

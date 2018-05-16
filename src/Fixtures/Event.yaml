@@ -1,0 +1,5 @@
+App\Entity\Event:
+    event_1:
+        title: 'Students hackathon 2018'
+        start_date: <dateTimeThisYear()>
+        end_date: <dateTimeThisYear()>

@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Person;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -23,7 +24,9 @@ class PersonType extends AbstractType
             ->add('codeSample')
             ->add('photo', MediaType::class)
             ->add('internship')
-            ->add('employment')
+            ->add('employment', CheckboxType::class, [
+                'label' => 'IT employment'
+            ])
             ->add('save', SubmitType::class, ['label' => 'Save', 'attr' => ['class' => 'btn btn-primary']])
         ;
     }

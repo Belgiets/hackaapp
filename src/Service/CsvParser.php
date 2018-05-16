@@ -8,6 +8,7 @@ use App\Controller\Admin\ParticipantController;
 use App\Entity\Event;
 use App\Entity\Media;
 use App\Entity\Participant;
+use App\Entity\ProjectType;
 use App\Entity\Team;
 use App\Helper\LoggerTrait;
 use App\Serializer\PersonNameConverter;
@@ -113,7 +114,15 @@ class CsvParser
 
             $participant = $existingParticipant ? $existingParticipant : new Participant($event);
             $participant->setPerson($person);
-            $participant->setProjectType($row['Який проект ти хочеш робити']);
+
+            $projectType = $this->em->getRepository(ProjectType::class)
+                ->findByStr($row['Який проект ти хочеш робити']);
+
+            if ($projectType) {
+                $participant->setProjectType($projectType);
+            } else {
+                $test = null;
+            }
 
             $participant->setActivationCode($this->generateCode($person->getEmail() . $participant->getEvent()->getTitle()));
 
