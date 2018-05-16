@@ -5,11 +5,14 @@ namespace App\Controller\Admin;
 use App\Entity\Media;
 use App\Entity\Participant;
 use App\Form\MediaType;
+use App\Form\ParticipantType;
 use App\Helper\PaginatorTrait;
 use App\Repository\ParticipantRepository;
+use App\Repository\PersonRepository;
 use App\Service\Notification;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
@@ -149,5 +152,74 @@ class ParticipantController extends Controller
         return $this->render('admin/participant/notifyForm.html.twig', [
             'form' => $form->createView(),
         ]);
+    }
+
+    /**
+     * @Route("/new", name="participant_new", methods="GET|POST")
+     */
+    public function new(Request $request, SessionInterface $session, PersonRepository $personRepository)
+    {
+        $participant = new Participant();
+        $form = $this->createForm(ParticipantType::class, $participant, [
+            'person_id' => $session->get('person_id')
+        ]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($participant);
+            $em->flush();
+
+            return $this->redirectToRoute('participant_list');
+        }
+
+        return $this->render('admin/newEditSimple.html.twig', [
+            'title' => "New participant",
+            'home_path' => 'participant_list',
+            'participant' => $participant,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/{id}", name="participant_show", methods="GET")
+     */
+    public function show(Participant $participant): Response
+    {
+        return $this->render('participant/show.html.twig', ['participant' => $participant]);
+    }
+
+    /**
+     * @Route("/{id}/edit", name="participant_edit", methods="GET|POST")
+     */
+    public function edit(Request $request, Participant $participant): Response
+    {
+        $form = $this->createForm(Participant1Type::class, $participant);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->getDoctrine()->getManager()->flush();
+
+            return $this->redirectToRoute('participant_edit', ['id' => $participant->getId()]);
+        }
+
+        return $this->render('participant/edit.html.twig', [
+            'participant' => $participant,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/{id}", name="participant_delete", methods="DELETE")
+     */
+    public function delete(Request $request, Participant $participant): Response
+    {
+        if ($this->isCsrfTokenValid('delete'.$participant->getId(), $request->request->get('_token'))) {
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($participant);
+            $em->flush();
+        }
+
+        return $this->redirectToRoute('participant_index');
     }
 }

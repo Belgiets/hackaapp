@@ -68,11 +68,10 @@ class Participant
      */
     private $projectType;
 
-    public function __construct($event)
+    public function __construct()
     {
         $this->isActive = false;
         $this->isNotified = false;
-        $this->event = $event;
     }
 
     public function getId()

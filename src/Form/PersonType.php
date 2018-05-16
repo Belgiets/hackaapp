@@ -25,7 +25,8 @@ class PersonType extends AbstractType
             ->add('photo', MediaType::class)
             ->add('internship')
             ->add('employment', CheckboxType::class, [
-                'label' => 'IT employment'
+                'label' => 'IT employment',
+                'required' => false
             ])
             ->add('save', SubmitType::class, ['label' => 'Save', 'attr' => ['class' => 'btn btn-primary']])
         ;

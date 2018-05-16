@@ -112,7 +112,8 @@ class CsvParser
             $existingParticipant = $this->em->getRepository(Participant::class)
                 ->findByPersonAndEvent($person, $event);
 
-            $participant = $existingParticipant ? $existingParticipant : new Participant($event);
+            $participant = $existingParticipant ? $existingParticipant : new Participant();
+            $participant->setEvent($event);
             $participant->setPerson($person);
 
             $projectType = $this->em->getRepository(ProjectType::class)
