@@ -59,11 +59,21 @@
                                     </td>
                                     <td>
                                         <div class="btn-group">
-                                            <a href="{{ path('participant_edit', {'id': item.id}) }}"
+                                            <a href="{{ path('participant_feedback', {'id': item.id}) }}"
                                                class="btn btn-sm btn-outline-secondary">
-                                                Edit
+                                                Feedback
                                             </a>
                                             {% if is_granted('ROLE_SUPER_ADMIN') %}
+                                                <a href="{{ path('participant_show', {'id': item.id}) }}"
+                                                   class="btn btn-sm btn-outline-secondary">
+                                                    Detail
+                                                </a>
+
+                                                <a href="{{ path('participant_edit', {'id': item.id}) }}"
+                                                   class="btn btn-sm btn-outline-secondary">
+                                                    Edit
+                                                </a>
+
                                                 {% if item.isActive == false %}
                                                     <a href="{{ path('participant_activate', {'code': item.activationCode}) }}"
                                                        class="btn btn-sm btn-outline-secondary">

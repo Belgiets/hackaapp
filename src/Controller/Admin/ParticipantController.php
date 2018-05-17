@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Media;
 use App\Entity\Participant;
+use App\Form\FeedbackType;
 use App\Form\MediaType;
 use App\Form\ParticipantType;
 use App\Helper\PaginatorTrait;
@@ -185,7 +186,10 @@ class ParticipantController extends Controller
      */
     public function show(Participant $participant)
     {
-        return $this->render('participant/show.html.twig', ['participant' => $participant]);
+        return $this->render('admin/participant/detailParticipant.html.twig', [
+            'person' => $participant->getPerson(),
+            'participant' => $participant
+        ]);
     }
 
     /**
@@ -215,16 +219,26 @@ class ParticipantController extends Controller
     }
 
     /**
-     * @Route("/{id}", name="participant_delete", methods="DELETE")
+     * @Route("/{id}/feedback", name="participant_feedback", methods="GET|POST")
      */
-    public function delete(Request $request, Participant $participant)
+    public function feedback(Request $request, Participant $participant)
     {
-        if ($this->isCsrfTokenValid('delete'.$participant->getId(), $request->request->get('_token'))) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($participant);
-            $em->flush();
+        $form = $this->createForm(FeedbackType::class, $participant);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->getDoctrine()->getManager()->flush();
+
+            $this->addFlash("success", "Feedback updated");
+
+            return $this->redirectToRoute('participant_feedback', ['id' => $participant->getId()]);
         }
 
-        return $this->redirectToRoute('participant_index');
+        return $this->render('admin/participant/feedback.html.twig', [
+            'title' => "Edit participant feedback",
+            'home_path' => 'participant_list',
+            'participant' => $participant,
+            'form' => $form->createView(),
+        ]);
     }
 }
