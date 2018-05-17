@@ -1,0 +1,100 @@
+{% extends 'layout.html.twig' %}
+
+{% block content %}
+    <!-- Page Header-->
+    <div class="page-header no-margin-bottom">
+        <div class="container-fluid">
+            <h2 class="h5 no-margin-bottom">
+                {{ title }}
+                {% if is_granted('ROLE_SUPER_ADMIN') %}
+                    <a href="{{ path('person_new') }}" class="btn btn-primary ml-3">Add new</a>
+                {% endif %}
+            </h2>
+        </div>
+    </div>
+    <!-- Breadcrumb-->
+    <div class="container-fluid">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('participant_list') }}">Home</a></li>
+            <li class="breadcrumb-item active">{{ title }}</li>
+        </ul>
+    </div>
+    <section class="no-padding-top">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12 col-lg-8">
+                    {{ block('flash') }}
+                </div>
+            </div>
+            <div class="block margin-bottom-sm">
+                {% if not items is empty %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                {#<th>Event</th>#}
+                                <th>Last name</th>
+                                <th>First name</th>
+                                <th>Email</th>
+                                <th>Phone number</th>
+                                <th>Notified</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for item in items %}
+                                    <th scope="row">{{ loop.index }}</th>
+                                    {#<td>{{ item.event.title }}</td>#}
+                                    <td>{{ item.person.lastname }}</td>
+                                    <td>{{ item.person.firstname }}</td>
+                                    <td>{{ item.person.email }}</td>
+                                    <td>{{ item.person.phonenumber }}</td>
+                                    <td>
+                                        {{ item.isNotified ? 'Yes' : 'No' }}
+                                    </td>
+                                    <td>
+                                        {{ item.isActive ? 'Activated' : 'Not activated' }}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="{{ path('participant_feedback', {'id': item.id}) }}"
+                                               class="btn btn-sm btn-outline-secondary">
+                                                Feedback
+                                            </a>
+                                            {% if is_granted('ROLE_SUPER_ADMIN') %}
+                                                <a href="{{ path('participant_show', {'id': item.id}) }}"
+                                                   class="btn btn-sm btn-outline-secondary">
+                                                    Detail
+                                                </a>
+
+                                                <a href="{{ path('participant_edit', {'id': item.id}) }}"
+                                                   class="btn btn-sm btn-outline-secondary">
+                                                    Edit
+                                                </a>
+
+                                                {% if item.isActive == false %}
+                                                    <a href="{{ path('participant_activate', {'code': item.activationCode}) }}"
+                                                       class="btn btn-sm btn-outline-secondary">
+                                                        Activate
+                                                    </a>
+                                                {% endif %}
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <div class="pagination-wrapper">
+                            {{ knp_pagination_render(items) }}
+                        </div>
+                    </div>
+                {% else %}
+                    {% include('admin/noItems.html.twig') %}
+                {% endif %}
+            </div>
+        </div>
+    </section>
+{% endblock %}

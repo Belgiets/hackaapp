@@ -1,0 +1,90 @@
+{% extends 'layout.html.twig' %}
+
+{% block content %}
+    <!-- Page Header-->
+    <div class="page-header no-margin-bottom" xmlns="http://www.w3.org/1999/html">
+        <div class="container-fluid">
+            <h2 class="h5 no-margin-bottom">
+                {{ title }}
+                {% if is_granted('ROLE_SUPER_ADMIN') %}
+                    <a href="{{ path('team_new') }}" class="btn btn-primary ml-3">Add new</a>
+                {% endif %}
+            </h2>
+        </div>
+    </div>
+    <!-- Breadcrumb-->
+    <div class="container-fluid">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('team_list') }}">Home</a></li>
+            <li class="breadcrumb-item active">{{ title }}</li>
+        </ul>
+    </div>
+    <section class="no-padding-top">
+        <div class="container-fluid">
+            <div class="block margin-bottom-sm">
+                {% if not items is empty %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Event</th>
+                                <th>Teammates</th>
+                                <th>Mentors</th>
+                                <th>Idea</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for item in items %}
+                                <tr>
+                                    <th scope="row">{{ loop.index }}</th>
+                                    <td>{{ item.name }}</td>
+                                    <td>{{ item.event.title }}</td>
+                                    <td>
+                                        {% if item.participants is defined %}
+                                            {% for participant in item.participants %}
+                                                <a href="{{ path('person_view', {'id': participant.person.id}) }}">
+                                                    {{ participant.person.firstname~' '~participant.person.lastname}}
+                                                </a><br>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if item.mentors is defined %}
+                                            {% for mentor in item.mentors %}
+                                                {{ mentor.username }}<br>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ item.idea }}</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="{{ path('team_edit', {'id': item.id}) }}"
+                                               class="btn btn-sm btn-outline-secondary">
+                                                Edit
+                                            </a>
+                                            {% if is_granted('ROLE_SUPER_ADMIN') %}
+                                                <a href="{{ path('team_delete', {'id': item.id}) }}"
+                                                   class="btn btn-sm btn-outline-secondary">
+                                                    Delete
+                                                </a>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <div class="pagination-wrapper">
+                            {{ knp_pagination_render(items) }}
+                        </div>
+                    </div>
+                {% else %}
+                    {% include('admin/noItems.html.twig') %}
+                {% endif %}
+            </div>
+        </div>
+    </section>
+{% endblock %}

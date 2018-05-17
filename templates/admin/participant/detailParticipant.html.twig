@@ -1,0 +1,131 @@
+{% extends 'layout.html.twig' %}
+
+{% block content %}
+    <!-- Page Header-->
+    <div class="page-header no-margin-bottom">
+        <div class="container-fluid">
+            <h2 class="h5 no-margin-bottom">
+                {{ participant.person.firstname~' '~participant.person.lastname }}
+                <a href="{{ path('participant_edit', {'id': participant.id}) }}" class="btn btn-primary ml-3">Edit</a>
+            </h2>
+        </div>
+    </div>
+    <!-- Breadcrumb-->
+    <div class="container-fluid">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('person_list') }}">Home</a></li>
+            <li class="breadcrumb-item active">{{ person.firstname~' '~person.lastname }}</li>
+        </ul>
+    </div>
+    <section class="no-padding-top">
+        <div class="container-fluid">
+            <div class="block margin-bottom-sm">
+                <div class="row">
+                    <div class="col-12 col-sm-2"><strong>Type:</strong></div>
+                    <div class="col-12 col-sm-10">{{ participant.projectType }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-sm-2"><strong>Notified:</strong></div>
+                    <div class="col-12 col-sm-10">{{ participant.isNotified ? 'Yes' : 'No' }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-sm-2"><strong>Status:</strong></div>
+                    <div class="col-12 col-sm-10">{{ participant.isActive ? 'Activated' : 'Not activated' }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-sm-2"><strong>Event:</strong></div>
+                    <div class="col-12 col-sm-10">{{ participant.event }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-sm-2"><strong>Team:</strong></div>
+                    <div class="col-12 col-sm-10">{{ participant.team }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-sm-2"><strong>Idea:</strong></div>
+                    <div class="col-12 col-sm-10">{{ participant.team.idea }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-sm-2"><strong>Mentors:</strong></div>
+                    <div class="col-12 col-sm-10">
+                        {% if participant.team.mentors is defined %}
+                            {% for mentor in participant.team.mentors %}
+                                {{ mentor.username }}<br>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-sm-2"><strong>Feedback:</strong></div>
+                    <div class="col-12 col-sm-10">{{ participant.feedback }}</div>
+                </div>
+            </div>
+            <div class="block margin-bottom-sm">
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="photo">
+                            {% if person.photo.url is defined %}
+                                <img src="{{ person.photo.url }}" alt="Photo" class="img-thumbnail">
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-sm-2"><strong>First name:</strong></div>
+                    <div class="col-12 col-sm-10">{{ person.firstname }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-sm-2"><strong>Last name:</strong></div>
+                    <div class="col-12 col-sm-10">{{ person.lastname }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-sm-2"><strong>Email:</strong></div>
+                    <div class="col-12 col-sm-10">{{ person.email }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-sm-2"><strong>Phone number:</strong></div>
+                    <div class="col-12 col-sm-10">{{ person.phoneNumber }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-sm-2"><strong>Events:</strong></div>
+                    <div class="col-12 col-sm-10">
+                        {% for participant in person.participants %}
+                            {{ participant.event.title}}<br>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-sm-2"><strong>Study at:</strong></div>
+                    <div class="col-12 col-sm-10">{{ person.studyAt }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-sm-2"><strong>Specialization:</strong></div>
+                    <div class="col-12 col-sm-10">{{ person.specialization }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-sm-2"><strong>Course:</strong></div>
+                    <div class="col-12 col-sm-10">{{ person.course }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-sm-2"><strong>Code sample:</strong></div>
+                    <div class="col-12 col-sm-10">
+                        {% if person.codeSample %}
+                            <a href="{{ person.codeSample }}">{{ person.codeSample }}</a>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-sm-2"><strong>Internship:</strong></div>
+                    <div class="col-12 col-sm-10">
+                        {{ person.internship ? 'Yes':'No' }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-sm-2"><strong>IT employment:</strong></div>
+                    <div class="col-12 col-sm-10">
+                        {{ person.employment ? 'Yes':'No' }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

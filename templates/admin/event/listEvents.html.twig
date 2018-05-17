@@ -1,0 +1,103 @@
+{% extends 'layout.html.twig' %}
+
+{% block content %}
+    <!-- Page Header-->
+    <div class="page-header no-margin-bottom">
+        <div class="container-fluid">
+            <h2 class="h5 no-margin-bottom">
+                {{ title }}
+                <a href="{{ path('event_new') }}" class="btn btn-primary ml-3">Add new</a>
+                <!-- Modal-->
+                <div id="approve-notification-modal"
+                     tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                     aria-hidden="true" class="modal fade text-left">
+                    <div role="document" class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <strong id="exampleModalLabel" class="modal-title">
+                                    Send notifications
+                                </strong>
+                                <button type="button" data-dismiss="modal" aria-label="Close" class="close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Are you sure, you want to notify participants?</p>
+                                <a href="#"
+                                   id="finally-notify"
+                                   class="btn btn-sm btn-outline-secondary">
+                                    Notify
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </h2>
+        </div>
+    </div>
+    <!-- Breadcrumb-->
+    <div class="container-fluid">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('event_list') }}">Home</a></li>
+            <li class="breadcrumb-item active">{{ title }}</li>
+        </ul>
+    </div>
+    <section class="no-padding-top">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12 col-lg-8">
+                    {{ block('flash') }}
+                </div>
+            </div>
+            <div class="block margin-bottom-sm">
+                {% if not items is empty %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Title</th>
+                                <th>Start date</th>
+                                <th>End date</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for item in items %}
+                                <tr>
+                                    <th scope="row">{{ loop.index }}</th>
+                                    <td>{{ item.title }}</td>
+                                    <td>{{ item.startDate | date }}</td>
+                                    <td>{{ item.endDate | date }}</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="#" id="approve-notification-btn" data-toggle="modal"
+                                                data-target="#approve-notification-modal"
+                                                data-link="{{ path('event_notify', {'id': item.id}) }}"
+                                                class="btn btn-sm btn-outline-secondary">Notify
+                                            </a>
+                                            <a href="{{ path('event_edit', {'id': item.id}) }}"
+                                               class="btn btn-sm btn-outline-secondary">
+                                                Edit
+                                            </a>
+                                            <a href="{{ path('event_delete', {'id': item.id}) }}"
+                                               class="btn btn-sm btn-outline-secondary">
+                                                Delete
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <div class="pagination-wrapper">
+                            {{ knp_pagination_render(items) }}
+                        </div>
+                    </div>
+                {% else %}
+                    {% include('admin/noItems.html.twig') %}
+                {% endif %}
+            </div>
+        </div>
+    </section>
+{% endblock %}

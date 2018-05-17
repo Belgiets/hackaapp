@@ -1,0 +1,115 @@
+{% extends 'base.html.twig' %}
+
+{% block flash %}
+    {% if app.session.flashBag.keys is defined and app.session.flashBag.keys|length > 0 %}
+        <div class="flash-block">
+            {% for flashType in app.session.flashbag.keys %}
+                {% for flash in app.session.flashbag.get(flashType) %}
+                    <div class="alert alert-{{ flashType }} text-left">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        {{ flash|raw }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <header class="header">
+        <nav class="navbar navbar-expand-lg">
+            <div class="search-panel">
+                <div class="search-inner d-flex align-items-center justify-content-center">
+                    <div class="close-btn">Close <i class="fa fa-close"></i></div>
+                    <form id="searchForm" action="#">
+                        <div class="form-group">
+                            <input type="search" name="search" placeholder="What are you searching for...">
+                            <button type="submit" class="submit">Search</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="container-fluid d-flex align-items-center justify-content-between">
+                <div class="navbar-header">
+                    <!-- Navbar Header--><a href="{{ path('event_list') }}" class="navbar-brand">
+                        <div class="brand-text brand-big visible text-uppercase"><strong class="text-primary">EK</strong><strong>EVENTS</strong></div>
+                        <div class="brand-text brand-sm"><strong class="text-primary">E</strong><strong>E</strong></div></a>
+                    <!-- Sidebar Toggle Btn-->
+                    <button class="sidebar-toggle"><i class="fa fa-long-arrow-left"></i></button>
+                </div>
+                <div class="right-menu list-inline no-margin-bottom">
+                    <div class="list-inline-item">
+                        <a href="#" class="search-open nav-link"><i class="icon-magnifying-glass-browser"></i></a>
+                    </div>
+                    <!-- Log out               -->
+                    <div class="list-inline-item logout">
+                        <a id="logout" href="{{ path('logout') }}" class="nav-link">Logout <i class="icon-logout"></i></a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="d-flex align-items-stretch">
+        <!-- Sidebar Navigation-->
+        <nav id="sidebar">
+            <!-- Sidebar Header-->
+            <div class="sidebar-header d-flex align-items-center">
+                <div class="avatar">
+                    <i class="fa fa-4x fa-user"></i>
+                </div>
+                {% if app.user %}
+                    <div class="title">
+                        <p><strong>{{ app.user.email }}</strong></p>
+                        <p>Admin</p>
+                    </div>
+                {% endif %}
+            </div>
+            <!-- Sidebar Navidation Menus-->
+            <ul class="list-unstyled">
+                {% set menu = [
+                    ['participant_list', 'Participants', 'fa fa-users']
+                ] %}
+
+                {% if is_granted('ROLE_SUPER_ADMIN') %}
+                    {% set menu = menu|merge([
+                        ['team_list', 'Teams', 'fa fa-ship'],
+                        ['event_list', 'Events', 'fa fa-calendar-o'],
+                        ['parse_csv', 'Parse csv', 'fa fa-cogs'],
+                        ['admin_list', 'Administrators', 'fa fa-user-secret']
+                    ]) %}
+                {% endif %}
+
+                {% for menuItem in menu %}
+                    {% set active = (app.request.get('_route') == menuItem[0]) ? 'active' : '' %}
+
+                    {% if menuItem[2] is iterable %}
+                        <li>
+                            <a href="#dd-menu" aria-expanded="false" data-toggle="collapse">
+                                <i class="{{ menuItem[1] }}"></i>{{ menuItem[0] }}
+                            </a>
+
+                            <ul id="dd-menu" class="collapse list-unstyled ">
+                                {% for menuDropDown in menuItem[2] %}
+                                    <li>
+                                        <a href="{{ path(menuDropDown[0]) }}">{{ menuDropDown[1] }}</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="{{ active }}">
+                            <a href="{{ path(menuItem[0]) }}">
+                                <i class="{{ menuItem[2] }}"></i>{{ menuItem[1] }}
+                            </a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </nav>
+        <!-- Sidebar Navigation end-->
+        <div class="page-content">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+{% endblock %}
