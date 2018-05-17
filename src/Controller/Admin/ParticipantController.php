@@ -18,7 +18,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
  * @Route("/admin/participant")
@@ -184,7 +183,7 @@ class ParticipantController extends Controller
     /**
      * @Route("/{id}", name="participant_show", methods="GET")
      */
-    public function show(Participant $participant): Response
+    public function show(Participant $participant)
     {
         return $this->render('participant/show.html.twig', ['participant' => $participant]);
     }
@@ -192,18 +191,24 @@ class ParticipantController extends Controller
     /**
      * @Route("/{id}/edit", name="participant_edit", methods="GET|POST")
      */
-    public function edit(Request $request, Participant $participant): Response
+    public function edit(Request $request, Participant $participant)
     {
-        $form = $this->createForm(Participant1Type::class, $participant);
+        $form = $this->createForm(ParticipantType::class, $participant, [
+            'edit' => true
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->getDoctrine()->getManager()->flush();
 
+            $this->addFlash("success", "Participant updated");
+
             return $this->redirectToRoute('participant_edit', ['id' => $participant->getId()]);
         }
 
-        return $this->render('participant/edit.html.twig', [
+        return $this->render('admin/participant/editPersonParticipant.html.twig', [
+            'title' => "Edit person/participant",
+            'home_path' => 'participant_list',
             'participant' => $participant,
             'form' => $form->createView(),
         ]);
@@ -212,7 +217,7 @@ class ParticipantController extends Controller
     /**
      * @Route("/{id}", name="participant_delete", methods="DELETE")
      */
-    public function delete(Request $request, Participant $participant): Response
+    public function delete(Request $request, Participant $participant)
     {
         if ($this->isCsrfTokenValid('delete'.$participant->getId(), $request->request->get('_token'))) {
             $em = $this->getDoctrine()->getManager();

@@ -68,6 +68,11 @@ class Participant
      */
     private $projectType;
 
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $feedback;
+
     public function __construct()
     {
         $this->isActive = false;
@@ -203,5 +208,21 @@ class Participant
         $this->projectType = $projectType;
 
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFeedback()
+    {
+        return $this->feedback;
+    }
+
+    /**
+     * @param mixed $feedback
+     */
+    public function setFeedback($feedback): void
+    {
+        $this->feedback = $feedback;
     }
 }

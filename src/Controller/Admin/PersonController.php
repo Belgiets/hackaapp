@@ -79,7 +79,7 @@ class PersonController extends Controller
         }
 
         return $this->render(
-            'admin/person/newEditPerson.html.twig',
+            'admin/person/newPerson.html.twig',
             [
                 'form' => $form->createView(),
                 'title' => 'New person/participant',
@@ -101,11 +101,13 @@ class PersonController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->flush();
 
-            return $this->redirectToRoute('person_list');
+            $this->addFlash("success", "Person updated");
+
+            return $this->redirectToRoute('participant_list');
         }
 
         return $this->render(
-            'admin/person/newEditPerson.html.twig',
+            'admin/person/editPerson.html.twig',
             [
                 'form' => $form->createView(),
                 'title' => 'Edit person',

@@ -9,21 +9,6 @@
                 {% if is_granted('ROLE_SUPER_ADMIN') %}
                     <a href="{{ path('person_new') }}" class="btn btn-primary ml-3">Add new</a>
                 {% endif %}
-                {#<button id="approve-notification-btn" type="button" data-toggle="modal"#}
-                        {#data-target="#approve-notification-modal"#}
-                        {#class="btn btn-primary ml-2 d-none">Notify</button>#}
-                {#<!-- Modal-->#}
-                {#<div id="approve-notification-modal"#}
-                     {#tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"#}
-                     {#aria-hidden="true" class="modal fade text-left">#}
-                    {#<div role="document" class="modal-dialog">#}
-                        {#<div class="modal-content">#}
-                            {#{{ render(controller(#}
-                                {#'App\\Controller\\Admin\\ParticipantController::notifyAction'#}
-                            {#)) }}#}
-                        {#</div>#}
-                    {#</div>#}
-                {#</div>#}
             </h2>
         </div>
     </div>
@@ -36,6 +21,11 @@
     </div>
     <section class="no-padding-top">
         <div class="container-fluid">
+            <div class="row">
+                <div class="col-12 col-lg-8">
+                    {{ block('flash') }}
+                </div>
+            </div>
             <div class="block margin-bottom-sm">
                 {% if not items is empty %}
                     <div class="table-responsive">
@@ -43,33 +33,45 @@
                             <thead>
                             <tr>
                                 <th>#</th>
-                                {#<th>#}
-                                    {#<input id="notify-all" type="checkbox" value="" class="checkbox-template">#}
-                                    {#<span class="ml-1">Notify</span>#}
-                                {#</th>#}
-                                <th>Event</th>
+                                {#<th>Event</th>#}
                                 <th>Last name</th>
                                 <th>First name</th>
                                 <th>Email</th>
                                 <th>Phone number</th>
                                 <th>Notified</th>
+                                <th>Status</th>
+                                <th>Actions</th>
                             </tr>
                             </thead>
                             <tbody>
                             {% for item in items %}
-                                <tr>
                                     <th scope="row">{{ loop.index }}</th>
-                                    {#<td>#}
-                                        {#<input data-id="{{ item.id }}" type="checkbox" value=""#}
-                                               {#class="checkbox-template -notify">#}
-                                    {#</td>#}
-                                    <td>{{ item.event.title }}</td>
+                                    {#<td>{{ item.event.title }}</td>#}
                                     <td>{{ item.person.lastname }}</td>
                                     <td>{{ item.person.firstname }}</td>
                                     <td>{{ item.person.email }}</td>
                                     <td>{{ item.person.phonenumber }}</td>
                                     <td>
                                         {{ item.isNotified ? 'Yes' : 'No' }}
+                                    </td>
+                                    <td>
+                                        {{ item.isActive ? 'Activated' : 'Not activated' }}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="{{ path('participant_edit', {'id': item.id}) }}"
+                                               class="btn btn-sm btn-outline-secondary">
+                                                Edit
+                                            </a>
+                                            {% if is_granted('ROLE_SUPER_ADMIN') %}
+                                                {% if item.isActive == false %}
+                                                    <a href="{{ path('participant_activate', {'code': item.activationCode}) }}"
+                                                       class="btn btn-sm btn-outline-secondary">
+                                                        Activate
+                                                    </a>
+                                                {% endif %}
+                                            {% endif %}
+                                        </div>
                                     </td>
                                 </tr>
                             {% endfor %}

@@ -1,0 +1,12 @@
+{%- if person is defined and person.photo.url is defined %}
+    <div class="form-group row">
+        <div class="col-12">
+            <div class="photo">
+                <img src="{{ person.photo.url }}" alt="Photo" class="img-thumbnail">
+            </div>
+        </div>
+    </div>
+{% endif %}
+{{ form_start(form, {attr: {class: 'form-horizontal'}}) }}
+{{ form_widget(form) }}
+{{ form_end(form) }}

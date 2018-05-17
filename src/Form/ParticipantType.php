@@ -32,74 +32,77 @@ class ParticipantType extends AbstractType
      * ParticipantType constructor.
      */
     public function __construct(
-      PersonRepository $personRepository,
-      CsvParser $csvParser
+        PersonRepository $personRepository,
+        CsvParser $csvParser
     ) {
         $this->personRepository = $personRepository;
-        $this->csvParser        = $csvParser;
+        $this->csvParser = $csvParser;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-          ->add('projectType')
-          ->add('event')
-          ->add('team')
-          ->add('isActive')
-          ->addEventListener(
-            FormEvents::PRE_SET_DATA,
-            function (FormEvent $event) use ($options) {
-                $form = $event->getForm();
+            ->add('projectType')
+            ->add('event')
+            ->add('team')
+            ->add('isActive')
+            ->add('feedback')
+            ->addEventListener(
+                FormEvents::PRE_SET_DATA,
+                function (FormEvent $event) use ($options) {
+                    $form = $event->getForm();
 
-                if ($options['person_id'] !== null) {
+                    if ($options['person_id'] !== null) {
+                        $form->add(
+                            'person',
+                            EntityType::class,
+                            [
+                                'class' => Person::class,
+                                'data' => $this->personRepository->findOneBy(
+                                    ['id' => $options['person_id']]
+                                ),
+                            ]
+                        );
+                    } else {
+                        $form->add('person');
+                    }
+
                     $form->add(
-                      'person',
-                      EntityType::class,
-                      [
-                        'class' => Person::class,
-                        'data'  => $this->personRepository->findOneBy(
-                          ['id' => $options['person_id']]
-                        ),
-                      ]
+                        'save',
+                        SubmitType::class,
+                        ['label' => 'Save', 'attr' => ['class' => 'btn btn-primary']]
                     );
-                } else {
-                    $form->add('person', EntityType::class);
                 }
+            )
+            ->addEventListener(
+                FormEvents::POST_SUBMIT,
+                function (FormEvent $event) use ($options) {
+                    $form = $event->getForm();
 
-                $form->add(
-                  'save',
-                  SubmitType::class,
-                  ['label' => 'Save', 'attr' => ['class' => 'btn btn-primary']]
-                );
-            }
-          )
-          ->addEventListener(
-            FormEvents::POST_SUBMIT,
-            function (FormEvent $event) use ($options) {
-                $form = $event->getForm();
+                    if (($options['person_id'] !== null) && (!$options['edit'])) {
+                        $person = $this->personRepository->findOneBy(
+                            ['id' => $options['person_id']]
+                        );
+                        $participant = $event->getData();
 
-                if (($options['person_id'] !== null) && (!$options['edit'])) {
-                    $person = $this->personRepository->findOneBy(
-                      ['id' => $options['person_id']]
-                    );
-                    $participant = $event->getData();
+                        $activationCode = $this->csvParser->generateCode(
+                            $person->getEmail().$participant->getEvent()->getTitle()
+                        );
 
-                    $activationCode = $this->csvParser->generateCode($person->getEmail()  . $participant->getEvent()->getTitle());
-
-                    $participant->setActivationCode($activationCode);
+                        $participant->setActivationCode($activationCode);
+                    }
                 }
-            }
-          );
+            );
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(
-          [
-            'data_class' => Participant::class,
-            'edit'       => false,
-            'person_id'  => null,
-          ]
+            [
+                'data_class' => Participant::class,
+                'edit' => false,
+                'person_id' => null,
+            ]
         );
     }
 }
