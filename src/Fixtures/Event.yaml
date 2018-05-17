@@ -1,5 +1,5 @@
 App\Entity\Event:
     event_1:
-        title: 'Students hackathon 2018'
+        title: 'Kreative Hackathon від eKreative'
         start_date: <dateTimeThisYear()>
         end_date: <dateTimeThisYear()>
