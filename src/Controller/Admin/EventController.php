@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\Event;
 use App\Form\EventType;
 use App\Helper\PaginatorTrait;
+use App\Service\Notification;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -106,6 +107,19 @@ class EventController extends Controller
         $em = $this->getDoctrine()->getManager();
         $em->remove($event);
         $em->flush();
+
+        return $this->redirectToRoute('event_list');
+    }
+
+    /**
+     * @Route("/{id}/notify", name="event_notify")
+     * @Method({"GET", "POST"})
+     */
+    public function notify(Event $event, Notification $notification)
+    {
+        $result = $notification->notifyByEvent($event);
+
+        $this->addFlash('success', "Notified {$result} participants");
 
         return $this->redirectToRoute('event_list');
     }
