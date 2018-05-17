@@ -69,6 +69,7 @@ class ParticipantController extends Controller
                 $form->handleRequest($request);
 
                 if ($form->isSubmitted() && $form->isValid()) {
+                    $person->setPhoto($photo);
                     $em->persist($person);
                     $em->flush();
                 }
