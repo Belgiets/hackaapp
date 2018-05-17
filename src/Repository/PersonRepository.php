@@ -21,7 +21,9 @@ class PersonRepository extends ServiceEntityRepository
 
     public function getAll()
     {
-        return $this->createQueryBuilder('p')->getQuery();
+        return $this->createQueryBuilder('p')
+            ->addOrderBy('p.lastName', 'ASC')
+            ->getQuery();
     }
 //    /**
 //     * @return Person[] Returns an array of Person objects

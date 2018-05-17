@@ -8,6 +8,7 @@ use App\Controller\Admin\ParticipantController;
 use App\Entity\Event;
 use App\Entity\Media;
 use App\Entity\Participant;
+use App\Entity\ProjectType;
 use App\Entity\Team;
 use App\Helper\LoggerTrait;
 use App\Serializer\PersonNameConverter;
@@ -111,9 +112,16 @@ class CsvParser
             $existingParticipant = $this->em->getRepository(Participant::class)
                 ->findByPersonAndEvent($person, $event);
 
-            $participant = $existingParticipant ? $existingParticipant : new Participant($event);
+            $participant = $existingParticipant ? $existingParticipant : new Participant();
+            $participant->setEvent($event);
             $participant->setPerson($person);
-            $participant->setProjectType($row['Який проект ти хочеш робити']);
+
+            $projectType = $this->em->getRepository(ProjectType::class)
+                ->findByStr($row['Який проект ти хочеш робити']);
+
+            if ($projectType) {
+                $participant->setProjectType($projectType);
+            }
 
             $participant->setActivationCode($this->generateCode($person->getEmail() . $participant->getEvent()->getTitle()));
 
@@ -128,19 +136,21 @@ class CsvParser
             }
 
             //process team
-            if ($teamName = empty($row["Назва команди "]) ? false : $row["Назва команди "]) {
-                $team = $this->em->getRepository(Team::class)->findByNameAndEvent($teamName, $event);
+            if ($row["Чи є в тебе команда? "] === "Так") {
+                if ($teamName = empty($row["Назва команди "]) ? false : $row["Назва команди "]) {
+                    $team = $this->em->getRepository(Team::class)->findByNameAndEvent($teamName, $event);
 
-                if (!$team) {
-                    $team = new Team();
-                    $team->setName($teamName);
-                    $team->setEvent($event);
+                    if (!$team) {
+                        $team = new Team();
+                        $team->setName($teamName);
+                        $team->setEvent($event);
+                    }
+
+                    $this->em->persist($team);
+                    $this->em->flush();
+
+                    $participant->setTeam($team);
                 }
-
-                $this->em->persist($team);
-                $this->em->flush();
-
-                $participant->setTeam($team);
             }
 
             $this->em->persist($participant);
@@ -160,7 +170,7 @@ class CsvParser
      * @return string
      * @throws \Exception
      */
-    private function generateCode($str)
+    public function generateCode($str)
     {
         return md5($this->token . md5($str));
     }

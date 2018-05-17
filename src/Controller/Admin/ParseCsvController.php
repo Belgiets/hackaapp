@@ -11,12 +11,14 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
  * Class ParseCsvController
  * @package App\Controller
  *
  * @Route("/admin/csv")
+ * @IsGranted("ROLE_SUPER_ADMIN")
  */
 class ParseCsvController extends Controller
 {

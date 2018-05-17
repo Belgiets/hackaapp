@@ -63,15 +63,20 @@ class Participant
     private $isNotified;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\ManyToOne(targetEntity="App\Entity\ProjectType", inversedBy="participants")
+     * @ORM\JoinColumn(nullable=true)
      */
     private $projectType;
 
-    public function __construct($event)
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $feedback;
+
+    public function __construct()
     {
         $this->isActive = false;
         $this->isNotified = false;
-        $this->event = $event;
     }
 
     public function getId()
@@ -82,6 +87,22 @@ class Participant
     public function isActive(): ?bool
     {
         return $this->isActive;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIsActive()
+    {
+        return $this->isActive;
+    }
+
+    /**
+     * @param mixed $isActive
+     */
+    public function setIsActive($isActive): void
+    {
+        $this->isActive = $isActive;
     }
 
     public function activate()
@@ -177,15 +198,31 @@ class Participant
         return $this;
     }
 
-    public function getProjectType(): ?string
+    public function getProjectType(): ?ProjectType
     {
         return $this->projectType;
     }
 
-    public function setProjectType(?string $projectType): self
+    public function setProjectType(?ProjectType $projectType): self
     {
         $this->projectType = $projectType;
 
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFeedback()
+    {
+        return $this->feedback;
+    }
+
+    /**
+     * @param mixed $feedback
+     */
+    public function setFeedback($feedback): void
+    {
+        $this->feedback = $feedback;
     }
 }

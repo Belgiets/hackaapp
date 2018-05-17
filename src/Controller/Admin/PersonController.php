@@ -6,15 +6,18 @@ use App\Entity\Person;
 use App\Form\PersonType;
 use App\Helper\PaginatorTrait;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
  * Class PersonController
  * @package App\Controller\Admin
  *
  * @Route("/admin/person")
+ * @IsGranted("ROLE_SUPER_ADMIN")
  */
 class PersonController extends Controller
 {
@@ -59,7 +62,7 @@ class PersonController extends Controller
      * @Route("/new", name="person_new")
      * @Method({"GET", "POST"})
      */
-    public function newAction(Request $request)
+    public function newAction(Request $request, SessionInterface $session)
     {
         $person = new Person();
         $form = $this->createForm(PersonType::class, $person);
@@ -70,14 +73,16 @@ class PersonController extends Controller
             $em->persist($person);
             $em->flush();
 
-            return $this->redirectToRoute('person_list');
+            $session->set('person_id', $person->getId());
+
+            return $this->redirectToRoute('participant_new');
         }
 
         return $this->render(
-            'admin/person/newEditPerson.html.twig',
+            'admin/person/newPerson.html.twig',
             [
                 'form' => $form->createView(),
-                'title' => 'New person',
+                'title' => 'New person/participant',
                 'home_path' => 'person_list'
             ]
         );
@@ -96,11 +101,13 @@ class PersonController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->flush();
 
-            return $this->redirectToRoute('person_list');
+            $this->addFlash("success", "Person updated");
+
+            return $this->redirectToRoute('participant_list');
         }
 
         return $this->render(
-            'admin/person/newEditPerson.html.twig',
+            'admin/person/editPerson.html.twig',
             [
                 'form' => $form->createView(),
                 'title' => 'Edit person',

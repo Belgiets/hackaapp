@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
  * Class TeamController
@@ -22,6 +23,7 @@ class TeamController extends Controller
 
     /**
      * @Route("", name="team_list")
+     * @IsGranted("ROLE_ADMIN")
      * @Method({"GET"})
      */
     public function listAction(Request $request)
@@ -43,6 +45,7 @@ class TeamController extends Controller
 
     /**
      * @Route("/new", name="team_new")
+     * @IsGranted("ROLE_SUPER_ADMIN")
      * @Method({"GET", "POST"})
      */
     public function newAction(Request $request)
@@ -71,6 +74,7 @@ class TeamController extends Controller
 
     /**
      * @Route("/{id}/edit", name="team_edit")
+     * @IsGranted("ROLE_ADMIN")
      * @Method({"GET", "POST"})
      */
     public function editAction(Request $request, Team $team)
@@ -97,6 +101,7 @@ class TeamController extends Controller
 
     /**
      * @Route("/{id}/delete", name="team_delete")
+     * @IsGranted("ROLE_SUPER_ADMIN")
      * @Method({"GET", "POST"})
      */
     public function deleteAction(Request $request, Team $team)

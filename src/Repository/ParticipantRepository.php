@@ -23,7 +23,10 @@ class ParticipantRepository extends ServiceEntityRepository
 
     public function getAll()
     {
-        return $this->createQueryBuilder('p')->getQuery();
+        return $this->createQueryBuilder('participant')
+            ->leftJoin('participant.person', 'person')
+            ->addOrderBy('person.lastName', 'ASC')
+            ->getQuery();
     }
 
     /**
