@@ -170,7 +170,7 @@ class CsvParser
      * @return string
      * @throws \Exception
      */
-    private function generateCode($str)
+    public function generateCode($str)
     {
         return md5($this->token . md5($str));
     }
