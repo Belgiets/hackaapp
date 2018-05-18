@@ -69,7 +69,7 @@ class ParticipantController extends Controller
     /**
      * @IsGranted("ROLE_SUPER_ADMIN")
      * @Route("/activate", name="participant_activate")
-     * @Method({"GET"})
+     * @Method({"GET", "POST"})
      */
     public function activate(Request $request)
     {
