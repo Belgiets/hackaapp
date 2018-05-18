@@ -47,6 +47,11 @@ class Team
      */
     private $idea;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $place;
+
     public function __construct()
     {
         $this->participants = new ArrayCollection();
@@ -152,6 +157,18 @@ class Team
     public function setIdea(?string $idea): self
     {
         $this->idea = $idea;
+
+        return $this;
+    }
+
+    public function getPlace(): ?string
+    {
+        return $this->place;
+    }
+
+    public function setPlace(?string $place): self
+    {
+        $this->place = $place;
 
         return $this;
     }
