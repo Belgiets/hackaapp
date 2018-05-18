@@ -42,11 +42,19 @@
                 </div>
                 <div class="row">
                     <div class="col-12 col-sm-2"><strong>Idea:</strong></div>
-                    <div class="col-12 col-sm-10">{{ participant.team.idea }}</div>
+                    <div class="col-12 col-sm-10">
+                        {% if participant.team.idea is defined %}
+                            {{ participant.team.idea }}
+                        {% endif %}
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-12 col-sm-2"><strong>Place:</strong></div>
-                    <div class="col-12 col-sm-10">{{ participant.team.place }}</div>
+                    <div class="col-12 col-sm-10">
+                        {% if participant.team.place is defined %}
+                            {{ participant.team.place }}
+                        {% endif %}
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-12 col-sm-2"><strong>Mentors:</strong></div>
