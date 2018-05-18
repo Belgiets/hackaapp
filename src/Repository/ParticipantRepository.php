@@ -29,6 +29,16 @@ class ParticipantRepository extends ServiceEntityRepository
             ->getQuery();
     }
 
+    public function searchByLastName(string $str)
+    {
+        return $this->createQueryBuilder('participant')
+            ->leftJoin('participant.person', 'person')
+            ->addOrderBy('person.lastName', 'ASC')
+            ->where('person.lastName LIKE :str')
+            ->setParameter('str', "%$str%")
+            ->getQuery();
+    }
+
     /**
      * @param Person $person
      * @param Event $event

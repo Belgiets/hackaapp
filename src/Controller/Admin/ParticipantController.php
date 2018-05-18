@@ -7,6 +7,7 @@ use App\Entity\Participant;
 use App\Form\FeedbackType;
 use App\Form\MediaType;
 use App\Form\ParticipantType;
+use App\Form\SearchParticipantType;
 use App\Helper\PaginatorTrait;
 use App\Repository\ParticipantRepository;
 use App\Repository\PersonRepository;
@@ -33,12 +34,24 @@ class ParticipantController extends Controller
     /**
      * @IsGranted("ROLE_ADMIN")
      * @Route("", name="participant_list")
-     * @Method({"GET"})
+     * @Method({"GET", "POST"})
      */
     public function listAction(Request $request, ParticipantRepository $repository)
     {
+        $searchForm = $this->createForm(SearchParticipantType::class);
+        $searchForm->handleRequest($request);
+        $target = $repository->getAll();
+
+        if ($searchForm->isSubmitted() && $searchForm->isValid()) {
+            $searchStr = $searchForm['lastname']->getData();
+
+            if (!empty($searchStr)) {
+                $target = $repository->searchByLastName($searchStr);
+            }
+        }
+
         $participants = $this->paginator->paginate(
-            $repository->getAll(),
+            $target,
             $request->query->getInt('page', 1),
             $this->getParameter('knp_paginator.page_range')
         );
@@ -46,6 +59,7 @@ class ParticipantController extends Controller
         return $this->render(
             'admin/participant/listParticipants.html.twig',
             [
+                'search_form' => $searchForm->createView(),
                 'title' => 'Participants',
                 'items' => $participants
             ]
@@ -55,6 +69,7 @@ class ParticipantController extends Controller
     /**
      * @IsGranted("ROLE_SUPER_ADMIN")
      * @Route("/activate", name="participant_activate")
+     * @Method({"GET"})
      */
     public function activate(Request $request)
     {

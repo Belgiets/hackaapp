@@ -18,17 +18,21 @@
 {% block body %}
     <header class="header">
         <nav class="navbar navbar-expand-lg">
-            <div class="search-panel">
-                <div class="search-inner d-flex align-items-center justify-content-center">
-                    <div class="close-btn">Close <i class="fa fa-close"></i></div>
-                    <form id="searchForm" action="#">
+            {% if search_form is defined %}
+                <div class="search-panel">
+                    <div class="search-inner d-flex align-items-center justify-content-center">
+                        <div class="close-btn">Close <i class="fa fa-close"></i></div>
+
+                        {{ form_start(search_form) }}
                         <div class="form-group">
-                            <input type="search" name="search" placeholder="What are you searching for...">
+                            {{ form_errors(search_form.lastname) }}
+                            {{ form_widget(search_form.lastname) }}
                             <button type="submit" class="submit">Search</button>
                         </div>
-                    </form>
+                        {{ form_end(search_form) }}
+                    </div>
                 </div>
-            </div>
+            {% endif %}
             <div class="container-fluid d-flex align-items-center justify-content-between">
                 <div class="navbar-header">
                     <!-- Navbar Header--><a href="{{ path('event_list') }}" class="navbar-brand">
@@ -38,9 +42,11 @@
                     <button class="sidebar-toggle"><i class="fa fa-long-arrow-left"></i></button>
                 </div>
                 <div class="right-menu list-inline no-margin-bottom">
-                    <div class="list-inline-item">
-                        <a href="#" class="search-open nav-link"><i class="icon-magnifying-glass-browser"></i></a>
-                    </div>
+                    {% if search_form is defined %}
+                        <div class="list-inline-item">
+                            <a href="#" class="search-open nav-link"><i class="icon-magnifying-glass-browser"></i></a>
+                        </div>
+                    {% endif %}
                     <!-- Log out               -->
                     <div class="list-inline-item logout">
                         <a id="logout" href="{{ path('logout') }}" class="nav-link">Logout <i class="icon-logout"></i></a>
