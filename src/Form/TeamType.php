@@ -17,6 +17,7 @@ class TeamType extends AbstractType
     {
         $builder
             ->add('name')
+            ->add('place')
             ->add('idea')
             ->add('event', EntityType::class, [
                 'class' => Event::class,

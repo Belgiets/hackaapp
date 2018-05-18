@@ -77,8 +77,6 @@ class ParticipantType extends AbstractType
             ->addEventListener(
                 FormEvents::POST_SUBMIT,
                 function (FormEvent $event) use ($options) {
-                    $form = $event->getForm();
-
                     if (($options['person_id'] !== null) && (!$options['edit'])) {
                         $person = $this->personRepository->findOneBy(
                             ['id' => $options['person_id']]

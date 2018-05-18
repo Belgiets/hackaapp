@@ -25,7 +25,6 @@ security:
                 check_path: login
                 username_parameter: email
                 default_target_path: participant_list
-                always_use_default_target_path: true
             logout:
                 path: /logout
                 target: /

@@ -39,7 +39,7 @@ abstract class BaseUser implements UserInterface, \Serializable
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=25, nullable=true)
+     * @ORM\Column(type="string", length=254, nullable=true)
      */
     private $username;
 

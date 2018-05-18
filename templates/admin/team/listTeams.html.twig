@@ -31,6 +31,7 @@
                                 <th>Name</th>
                                 <th>Event</th>
                                 <th>Teammates</th>
+                                <th>Place</th>
                                 <th>Mentors</th>
                                 <th>Idea</th>
                                 <th>Actions</th>
@@ -45,12 +46,13 @@
                                     <td>
                                         {% if item.participants is defined %}
                                             {% for participant in item.participants %}
-                                                <a href="{{ path('person_view', {'id': participant.person.id}) }}">
+                                                <a href="{{ path('participant_show', {'id': participant.id}) }}">
                                                     {{ participant.person.firstname~' '~participant.person.lastname}}
                                                 </a><br>
                                             {% endfor %}
                                         {% endif %}
                                     </td>
+                                    <td>{{ item.place }}</td>
                                     <td>
                                         {% if item.mentors is defined %}
                                             {% for mentor in item.mentors %}
