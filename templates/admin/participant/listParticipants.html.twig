@@ -1,5 +1,11 @@
 {% extends 'layout.html.twig' %}
 
+{% form_theme filter_form _self %}
+
+{% block form_label_class -%}
+    col-sm-12
+{%- endblock form_label_class %}
+
 {% block content %}
     <!-- Page Header-->
     <div class="page-header no-margin-bottom">
@@ -24,6 +30,66 @@
             <div class="row">
                 <div class="col-12 col-lg-8">
                     {{ block('flash') }}
+                </div>
+            </div>
+            <div class="block margin-bottom-sm">
+                <a class="btn btn-primary btn" data-toggle="collapse"
+                   href="#collapseFilter" role="button" aria-expanded="false" aria-controls="collapseExample">
+                    Display filter
+                </a>
+                <div class="collapse" id="collapseFilter">
+                    {{ form_start(filter_form) }}
+                    <div class="row mb-3">
+                        <div class="col-12 col-sm-2">
+                            {{ form_label(filter_form.employment) }}
+                            {{ form_errors(filter_form.employment) }}
+                            {{ form_widget(filter_form.employment) }}
+                        </div>
+                        <div class="col-12 col-sm-2">
+                            {{ form_label(filter_form.internship) }}
+                            {{ form_errors(filter_form.internship) }}
+                            {{ form_widget(filter_form.internship) }}
+                        </div>
+                        <div class="col-12 col-sm-2">
+                            {{ form_label(filter_form.isNotified) }}
+                            {{ form_errors(filter_form.isNotified) }}
+                            {{ form_widget(filter_form.isNotified) }}
+                        </div>
+                        <div class="col-12 col-sm-2">
+                            {{ form_label(filter_form.isActive) }}
+                            {{ form_errors(filter_form.isActive) }}
+                            {{ form_widget(filter_form.isActive) }}
+                        </div>
+                        <div class="col-12 col-sm-4">
+                            {{ form_label(filter_form.projectType) }}
+                            {{ form_errors(filter_form.projectType) }}
+                            {{ form_widget(filter_form.projectType) }}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12 col-sm-3">
+                            {{ form_label(filter_form.event) }}
+                            {{ form_errors(filter_form.event) }}
+                            {{ form_widget(filter_form.event) }}
+                        </div>
+                        <div class="col-12 col-sm-3">
+                            {{ form_label(filter_form.team) }}
+                            {{ form_errors(filter_form.team) }}
+                            {{ form_widget(filter_form.team) }}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <a href="{{ path('participant_list') }}" class="btn btn-primary btn">Reset</a>
+                            <button type="submit" id="person_participant_filter_filter"
+                                    name="person_participant_filter[filter]"
+                                    class="btn btn-primary btn ml-3">Filter
+                            </button>
+                        </div>
+                    </div>
+                    {{ form_end(filter_form) }}
                 </div>
             </div>
             <div class="block margin-bottom-sm">

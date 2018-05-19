@@ -6,7 +6,9 @@ use App\Entity\Media;
 use App\Entity\Participant;
 use App\Form\FeedbackType;
 use App\Form\MediaType;
+use App\Form\Model\PersonParticipantModel;
 use App\Form\ParticipantType;
+use App\Form\PersonParticipantFilterType;
 use App\Form\SearchParticipantType;
 use App\Helper\PaginatorTrait;
 use App\Repository\ParticipantRepository;
@@ -38,10 +40,12 @@ class ParticipantController extends Controller
      */
     public function listAction(Request $request, ParticipantRepository $repository)
     {
+        //search by lastname
         $searchForm = $this->createForm(SearchParticipantType::class);
         $searchForm->handleRequest($request);
         $target = $repository->getAll();
 
+        $searchForm->handleRequest($request);
         if ($searchForm->isSubmitted() && $searchForm->isValid()) {
             $searchStr = $searchForm['lastname']->getData();
 
@@ -49,6 +53,33 @@ class ParticipantController extends Controller
                 $target = $repository->searchByLastName($searchStr);
             }
         }
+
+        //filter
+        $model = new PersonParticipantModel();
+        $filterForm = $this->createForm(
+          PersonParticipantFilterType::class,
+          $model
+        );
+
+        $filterForm->handleRequest($request);
+        if ($filterForm->isSubmitted() && $filterForm->isValid()) {
+            if ($filterResult = $repository->filterByForm($model)) {
+                $target = $filterResult;
+            }
+        }
+
+
+//        $model = new SearchFilterByUser();
+//
+//        $animalCards = $this->getDoctrine()->getRepository('AppBundle:AnimalCard')->selectAnimalCardsByFilterForUser($model);
+//
+//        $form = $this->createForm(SearchByUserType::class, $model, ['action' => $this->generateUrl('homepage')]);
+//
+//        $form->handleRequest($request);
+//
+//        if ($form->isValid()) {
+//            $animalCards = $this->getDoctrine()->getRepository('AppBundle:AnimalCard')->selectAnimalCardsByFilterForUser($model);
+//        }
 
         $participants = $this->paginator->paginate(
             $target,
@@ -59,9 +90,10 @@ class ParticipantController extends Controller
         return $this->render(
             'admin/participant/listParticipants.html.twig',
             [
+                'filter_form' => $filterForm->createView(),
                 'search_form' => $searchForm->createView(),
                 'title' => 'Participants',
-                'items' => $participants
+                'items' => $participants,
             ]
         );
     }

@@ -38,7 +38,7 @@ class AdminUserController extends Controller
         return $this->render(
             'admin/admin_user/list.html.twig',
             [
-                'title' => 'Administrators',
+                'title' => 'Mentors',
                 'adminUsers' => $adminUsers
             ]
         );
