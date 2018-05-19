@@ -38,6 +38,7 @@ class Participant
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Team", inversedBy="participants")
+     * @ORM\JoinColumn(onDelete="SET NULL")
      */
     private $team;
 
