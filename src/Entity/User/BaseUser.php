@@ -4,6 +4,9 @@
 namespace App\Entity\User;
 
 
+use App\Entity\Feedback;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Knp\DoctrineBehaviors\Model\Timestampable\Timestampable;
 use Doctrine\ORM\Mapping as ORM;
@@ -19,12 +22,13 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="discriminator", type="string")
  * @ORM\DiscriminatorMap({
+ *     "baseUser" = "BaseUser",
  *     "super_admin" = "SuperAdminUser",
  *     "admin" = "AdminUser"
  * })
  *
  */
-abstract class BaseUser implements UserInterface, \Serializable
+class BaseUser implements UserInterface, \Serializable
 {
     use Timestampable;
 
@@ -72,9 +76,15 @@ abstract class BaseUser implements UserInterface, \Serializable
      */
     private $isActive;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Feedback", mappedBy="mentor", orphanRemoval=true)
+     */
+    private $feedbacks;
+
     public function __construct()
     {
         $this->activate();
+        $this->feedbacks = new ArrayCollection();
     }
 
     /**
@@ -254,4 +264,34 @@ abstract class BaseUser implements UserInterface, \Serializable
         $this->plainPassword = null;
     }
 
+    /**
+     * @return Collection|Feedback[]
+     */
+    public function getFeedbacks()
+    {
+        return $this->feedbacks;
+    }
+
+    public function addFeedback(Feedback $feedback): self
+    {
+        if (!$this->feedbacks->contains($feedback)) {
+            $this->feedbacks[] = $feedback;
+            $feedback->setMentor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFeedback(Feedback $feedback): self
+    {
+        if ($this->feedbacks->contains($feedback)) {
+            $this->feedbacks->removeElement($feedback);
+            // set the owning side to null (unless already changed)
+            if ($feedback->getMentor() === $this) {
+                $feedback->setMentor(null);
+            }
+        }
+
+        return $this;
+    }
 }
