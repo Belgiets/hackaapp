@@ -2,11 +2,14 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Feedback;
 use App\Entity\Media;
 use App\Entity\Participant;
 use App\Form\FeedbackType;
 use App\Form\MediaType;
+use App\Form\Model\PersonParticipantModel;
 use App\Form\ParticipantType;
+use App\Form\PersonParticipantFilterType;
 use App\Form\SearchParticipantType;
 use App\Helper\PaginatorTrait;
 use App\Repository\ParticipantRepository;
@@ -38,15 +41,35 @@ class ParticipantController extends Controller
      */
     public function listAction(Request $request, ParticipantRepository $repository)
     {
-        $searchForm = $this->createForm(SearchParticipantType::class);
-        $searchForm->handleRequest($request);
         $target = $repository->getAll();
 
-        if ($searchForm->isSubmitted() && $searchForm->isValid()) {
-            $searchStr = $searchForm['lastname']->getData();
+        //search by lastname
+        $searchForm = $this->createForm(SearchParticipantType::class);
 
-            if (!empty($searchStr)) {
-                $target = $repository->searchByLastName($searchStr);
+        //filter
+        $model = new PersonParticipantModel();
+        $filterForm = $this->createForm(
+            PersonParticipantFilterType::class,
+            $model
+        );
+
+        if ($request->request->has('search_participant')) {
+            $searchForm->handleRequest($request);
+
+            if ($searchForm->isSubmitted() && $searchForm->isValid()) {
+                $searchStr = $searchForm['lastname']->getData();
+
+                if (!empty($searchStr)) {
+                    $target = $repository->searchByLastName($searchStr);
+                }
+            }
+        } elseif ($request->request->has('person_participant_filter')) {
+            $filterForm->handleRequest($request);
+
+            if ($filterForm->isSubmitted() && $filterForm->isValid()) {
+                if ($filterResult = $repository->filterByForm($model)) {
+                    $target = $filterResult;
+                }
             }
         }
 
@@ -59,9 +82,10 @@ class ParticipantController extends Controller
         return $this->render(
             'admin/participant/listParticipants.html.twig',
             [
+                'filter_form' => $filterForm->createView(),
                 'search_form' => $searchForm->createView(),
                 'title' => 'Participants',
-                'items' => $participants
+                'items' => $participants,
             ]
         );
     }
@@ -235,31 +259,6 @@ class ParticipantController extends Controller
 
         return $this->render('admin/participant/editPersonParticipant.html.twig', [
             'title' => "Edit person/participant",
-            'home_path' => 'participant_list',
-            'participant' => $participant,
-            'form' => $form->createView(),
-        ]);
-    }
-
-    /**
-     * @IsGranted("ROLE_ADMIN")
-     * @Route("/{id}/feedback", name="participant_feedback", methods="GET|POST")
-     */
-    public function feedback(Request $request, Participant $participant)
-    {
-        $form = $this->createForm(FeedbackType::class, $participant);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
-
-            $this->addFlash("success", "Feedback updated");
-
-            return $this->redirectToRoute('participant_feedback', ['id' => $participant->getId()]);
-        }
-
-        return $this->render('admin/participant/feedback.html.twig', [
-            'title' => "Edit participant feedback",
             'home_path' => 'participant_list',
             'participant' => $participant,
             'form' => $form->createView(),

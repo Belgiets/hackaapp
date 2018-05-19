@@ -46,7 +46,6 @@ class ParticipantType extends AbstractType
             ->add('event')
             ->add('team')
             ->add('isActive')
-            ->add('feedback')
             ->addEventListener(
                 FormEvents::PRE_SET_DATA,
                 function (FormEvent $event) use ($options) {
