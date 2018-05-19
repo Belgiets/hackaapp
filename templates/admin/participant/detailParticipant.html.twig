@@ -68,7 +68,20 @@
                 </div>
                 <div class="row">
                     <div class="col-12 col-sm-2"><strong>Feedback:</strong></div>
-                    <div class="col-12 col-sm-10">{{ participant.feedback }}</div>
+                    <div class="col-12 col-sm-10">
+                        {% if participant.feedbacks is defined %}
+                            {% for feedback in participant.feedbacks %}
+                                <div class="card">
+                                    <div class="card-block">
+                                        <h5 class="card-title">{{ feedback.mentor.username }}:</h5>
+                                        <p class="card-text">
+                                            {{ feedback.description }}
+                                        </p>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
                 </div>
             </div>
             <div class="block margin-bottom-sm">

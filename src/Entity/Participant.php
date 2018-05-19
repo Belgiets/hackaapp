@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Knp\DoctrineBehaviors\Model\Timestampable\Timestampable;
 
@@ -70,14 +72,15 @@ class Participant
     private $projectType;
 
     /**
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\Feedback", mappedBy="participant", orphanRemoval=true)
      */
-    private $feedback;
+    private $feedbacks;
 
     public function __construct()
     {
         $this->isActive = false;
         $this->isNotified = false;
+        $this->feedbacks = new ArrayCollection();
     }
 
     public function getId()
@@ -212,18 +215,44 @@ class Participant
     }
 
     /**
-     * @return mixed
+     * @return Collection|Feedback[]
      */
-    public function getFeedback()
+    public function getFeedbacks(): Collection
     {
-        return $this->feedback;
+        return $this->feedbacks;
     }
 
-    /**
-     * @param mixed $feedback
-     */
-    public function setFeedback($feedback): void
+    public function addFeedback(Feedback $feedback): self
     {
-        $this->feedback = $feedback;
+        if (!$this->feedbacks->contains($feedback)) {
+            $this->feedbacks[] = $feedback;
+            $feedback->setParticipant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFeedback(Feedback $feedback): self
+    {
+        if ($this->feedbacks->contains($feedback)) {
+            $this->feedbacks->removeElement($feedback);
+            // set the owning side to null (unless already changed)
+            if ($feedback->getParticipant() === $this) {
+                $feedback->setParticipant(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function hasFeedbackByUser($user)
+    {
+        foreach ($this->getFeedbacks()->toArray() as $feedback) {
+            if ($feedback->getMentor()->getId() == $user->getId()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
