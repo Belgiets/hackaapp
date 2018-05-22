@@ -52,9 +52,9 @@ class FeedbackController extends Controller
         }
 
         return $this->render(
-            'admin/newEditSimple.html.twig',
+            'admin/feedback/newEditSimple.html.twig',
             [
-                'feedback' => $feedback,
+                'person_photo' => $participant->getPerson()->getPhoto(),
                 'form' => $form->createView(),
                 'title' => "New feedback",
                 'home_path' => 'participant_list',
@@ -95,9 +95,9 @@ class FeedbackController extends Controller
         }
 
         return $this->render(
-            'admin/newEditSimple.html.twig',
+            'admin/feedback/newEditSimple.html.twig',
             [
-                'feedback' => $feedback,
+                'person_photo' => $participant->getPerson()->getPhoto(),
                 'form' => $form->createView(),
                 'title' => "Edit feedback",
                 'home_path' => 'participant_list',
