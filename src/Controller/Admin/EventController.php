@@ -3,8 +3,11 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Event;
+use App\Entity\Participant;
 use App\Form\EventType;
 use App\Helper\PaginatorTrait;
+use App\Repository\ParticipantRepository;
+use App\Repository\TeamRepository;
 use App\Service\Notification;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -114,12 +117,69 @@ class EventController extends Controller
     /**
      * @Route("/{id}/notify", name="event_notify")
      * @Method({"GET", "POST"})
+     *
+     * @param Event $event
+     * @param Notification $notification
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
      */
     public function notify(Event $event, Notification $notification)
     {
         $result = $notification->notifyByEvent($event);
 
         $this->addFlash('success', "Notified {$result} participants");
+
+        return $this->redirectToRoute('event_list');
+    }
+
+    /**
+     * @IsGranted("ROLE_SUPER_ADMIN")
+     * @Route("/{id}/notify-activated", name="event_notify_activated", methods="GET|POST")
+     *
+     */
+    public function notifyActivated(Event $event, ParticipantRepository $repository, Notification $notification)
+    {
+        $activated = $repository->findBy(['event' => $event, 'isActive' => true]);
+
+        /** @var Participant $participant */
+        foreach ($activated as $participant) {
+            $notification->notify(
+                $participant->getEvent()->getTitle(),
+                $participant->getPerson()->getEmail(),
+                'emails/notifyActivated.html.twig'
+            );
+        }
+
+        $this->addFlash('success', 'Notified activated participants');
+
+        return $this->redirectToRoute('event_list');
+    }
+
+    /**
+     * @IsGranted("ROLE_SUPER_ADMIN")
+     * @Route("/{id}/notify-awarded", name="event_notify_awarded", methods="GET|POST")
+     */
+    public function notifyAwarded(Event $event, TeamRepository $repository, Notification $notification)
+    {
+        $teams = $repository->findBy(['event' => $event, 'isAwardee' => true]);
+
+        foreach ($teams as $team) {
+            $participants = $team->getParticipants();
+
+            foreach ($participants as $participant) {
+                if ($participant->isActive()) {
+                    $notification->notify(
+                        $participant->getEvent()->getTitle(),
+                        $participant->getPerson()->getEmail(),
+                        'emails/notifyAwarded.html.twig'
+                    );
+                }
+            }
+        }
+
+        $this->addFlash('success', "Notified awarded team's participants");
 
         return $this->redirectToRoute('event_list');
     }

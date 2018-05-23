@@ -2,10 +2,9 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\Feedback;
+
 use App\Entity\Media;
 use App\Entity\Participant;
-use App\Form\FeedbackType;
 use App\Form\MediaType;
 use App\Form\Model\PersonParticipantModel;
 use App\Form\ParticipantType;
@@ -156,55 +155,6 @@ class ParticipantController extends Controller
 
     /**
      * @IsGranted("ROLE_SUPER_ADMIN")
-     * @Route("/notify", name="participant_notify")
-     * @Method({"GET", "POST"})
-     *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
-     */
-    public function notifyAction(Request $request, ParticipantRepository $repository, Notification $notification)
-    {
-        $form = $this->createFormBuilder()
-            ->setMethod('POST')
-            ->setAction($this->generateUrl('participant_notify'))
-            ->add('participants', HiddenType::class)
-            ->getForm();
-
-        if ($request->getMethod() == Request::METHOD_GET) {
-            return $this->render('admin/participant/notifyForm.html.twig', [
-                'form' => $form->createView(),
-            ]);
-        }
-
-        $form->handleRequest($request);
-
-        if ($form->isValid()) {
-            $participantsIds = json_decode($form['participants']->getData());
-
-            foreach ($participantsIds as $participantId) {
-                /** @var Participant $participant */
-                $participant = $repository->findOneBy(['id' => $participantId]);
-
-                $notification->notify($participant->getEvent()->getTitle(), $participant);
-                $participant->setIsNotified(true);
-
-                $em = $this->getDoctrine()->getManager();
-                $em->persist($participant);
-                $em->flush();
-            }
-
-            return $this->redirectToRoute('participant_list');
-        }
-
-        return $this->render('admin/participant/notifyForm.html.twig', [
-            'form' => $form->createView(),
-        ]);
-    }
-
-    /**
-     * @IsGranted("ROLE_SUPER_ADMIN")
      * @Route("/new", name="participant_new", methods="GET|POST")
      */
     public function new(Request $request, SessionInterface $session, PersonRepository $personRepository)
@@ -269,4 +219,53 @@ class ParticipantController extends Controller
             'form' => $form->createView(),
         ]);
     }
+
+//    /**
+//     * @IsGranted("ROLE_SUPER_ADMIN")
+//     * @Route("/notify", name="participant_notify")
+//     * @Method({"GET", "POST"})
+//     *
+//     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+//     * @throws \Twig_Error_Loader
+//     * @throws \Twig_Error_Runtime
+//     * @throws \Twig_Error_Syntax
+//     */
+//    public function notifyAction(Request $request, ParticipantRepository $repository, Notification $notification)
+//    {
+//        $form = $this->createFormBuilder()
+//            ->setMethod('POST')
+//            ->setAction($this->generateUrl('participant_notify'))
+//            ->add('participants', HiddenType::class)
+//            ->getForm();
+//
+//        if ($request->getMethod() == Request::METHOD_GET) {
+//            return $this->render('admin/participant/notifyForm.html.twig', [
+//                'form' => $form->createView(),
+//            ]);
+//        }
+//
+//        $form->handleRequest($request);
+//
+//        if ($form->isValid()) {
+//            $participantsIds = json_decode($form['participants']->getData());
+//
+//            foreach ($participantsIds as $participantId) {
+//                /** @var Participant $participant */
+//                $participant = $repository->findOneBy(['id' => $participantId]);
+//
+//                $notification->notify($participant->getEvent()->getTitle(), $participant);
+//                $participant->setIsNotified(true);
+//
+//                $em = $this->getDoctrine()->getManager();
+//                $em->persist($participant);
+//                $em->flush();
+//            }
+//
+//            return $this->redirectToRoute('participant_list');
+//        }
+//
+//        return $this->render('admin/participant/notifyForm.html.twig', [
+//            'form' => $form->createView(),
+//        ]);
+//    }
 }

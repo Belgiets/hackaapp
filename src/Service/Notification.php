@@ -66,87 +66,16 @@ class Notification
     }
 
     /**
-     * @param \App\Entity\Event $event
-     *
-     * @return int
+     * @param string $to
+     * @param string $title
+     * @param string $template
+     * @param array $attrs
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function notifyByEvent($event)
+    private function sendEmail($to, $title, $template, $attrs = [])
     {
-        $s3 = new SesClient([
-          'version' => 'latest',
-          'region' => 'eu-west-1'
-        ]);
-
-        $participants = $event->getParticipants();
-
-        if (!empty($participants)) {
-            foreach ($participants->toArray() as $participant) {
-                $person = $participant->getPerson();
-
-                try {
-                    $s3->sendEmail([
-                      'Destination' => [
-                        'ToAddresses' => [$person->getEmail()],
-                      ],
-                      'Message' => [
-                        'Body' => [
-                          'Html' => [
-                            'Charset' => 'UTF-8',
-                            'Data' => $this->twig->render(
-                              'emails/hackaton.html.twig',
-                              [
-                                'person' => $person,
-                                'qr_url' => $participant->getActivationQr()->getUrl()
-                              ]
-                            ),
-                          ]
-                        ],
-                        'Subject' => [
-                          'Charset' => 'UTF-8',
-                          'Data' => $event->getTitle()
-                        ]
-                      ],
-                      'Source' => $this->from
-                    ]);
-
-                    $participant->setIsNotified(true);
-                    $this->em->persist($participant);
-                    $this->em->flush();
-                } catch (SesException $error) {
-                    $this->logger->error($error->getAwsErrorMessage());
-                }
-            }
-        }
-
-        return count($participants);
-    }
-
-    /**
-     * @param string $subject
-     * @param Participant $participant
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
-     */
-    public function notify(string $subject, Participant $participant)
-    {
-//        $data = [
-//            'from' => [$this->from, "from email!"],
-//            'to' => [$person->getEmail() => $person->getFirstName() . ' ' . $person->getLastName()],
-//            'subject' => $subject,
-//            'html' => $this->twig->render(
-//                'emails/hackaton.html.twig',
-//                ['person' => $person]
-//            ),
-//        ];
-//
-//        return $this->mailing->send_email($data);
-        $person = $participant->getPerson();
-
-
         $s3 = new SesClient([
             'version' => 'latest',
             'region' => 'eu-west-1'
@@ -155,24 +84,18 @@ class Notification
         try {
             $s3->sendEmail([
                 'Destination' => [
-                    'ToAddresses' => [$person->getEmail()],
+                    'ToAddresses' => [$to],
                 ],
                 'Message' => [
                     'Body' => [
                         'Html' => [
                             'Charset' => 'UTF-8',
-                            'Data' => $this->twig->render(
-                                'emails/hackaton.html.twig',
-                                [
-                                    'person' => $person,
-                                    'qr_url' => $participant->getActivationQr()->getUrl()
-                                ]
-                            ),
+                            'Data' => $this->twig->render($template, $attrs),
                         ]
                     ],
                     'Subject' => [
                         'Charset' => 'UTF-8',
-                        'Data' => $subject
+                        'Data' => $title
                     ]
                 ],
                 'Source' => $this->from
@@ -180,5 +103,99 @@ class Notification
         } catch (SesException $error) {
             $this->logger->error($error->getAwsErrorMessage());
         }
+    }
+
+    /**
+     * @param \App\Entity\Event $event
+     * @return int
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
+    public function notifyByEvent($event)
+    {
+        $participants = $event->getParticipants();
+
+        if (!empty($participants)) {
+            foreach ($participants->toArray() as $participant) {
+                $person = $participant->getPerson();
+
+                $this->sendEmail(
+                    $person->getEmail(),
+                    $event->getTitle(),
+                    'emails/hackaton.html.twig',
+                    [
+                        'person' => $person,
+                        'qr_url' => $participant->getActivationQr()->getUrl(),
+                    ]
+                );
+
+                $participant->setIsNotified(true);
+                $this->em->persist($participant);
+                $this->em->flush();
+            }
+        }
+
+        return count($participants);
+    }
+
+//    /**
+//     * @param string $subject
+//     * @param Participant $participant
+//     * @throws \Twig_Error_Loader
+//     * @throws \Twig_Error_Runtime
+//     * @throws \Twig_Error_Syntax
+//     */
+//    public function notify(string $subject, Participant $participant)
+//    {
+//        $person = $participant->getPerson();
+//
+//
+//        $s3 = new SesClient([
+//            'version' => 'latest',
+//            'region' => 'eu-west-1'
+//        ]);
+//
+//        try {
+//            $s3->sendEmail([
+//                'Destination' => [
+//                    'ToAddresses' => [$person->getEmail()],
+//                ],
+//                'Message' => [
+//                    'Body' => [
+//                        'Html' => [
+//                            'Charset' => 'UTF-8',
+//                            'Data' => $this->twig->render(
+//                                'emails/hackaton.html.twig',
+//                                [
+//                                    'person' => $person,
+//                                    'qr_url' => $participant->getActivationQr()->getUrl()
+//                                ]
+//                            ),
+//                        ]
+//                    ],
+//                    'Subject' => [
+//                        'Charset' => 'UTF-8',
+//                        'Data' => $subject
+//                    ]
+//                ],
+//                'Source' => $this->from
+//            ]);
+//        } catch (SesException $error) {
+//            $this->logger->error($error->getAwsErrorMessage());
+//        }
+//    }
+
+    /**
+     * @param string $subject
+     * @param string $email
+     * @param string $template
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
+    public function notify(string $subject, string $email, string $template)
+    {
+        $this->sendEmail($email, $subject, $template);
     }
 }
