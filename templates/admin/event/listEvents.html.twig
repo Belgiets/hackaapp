@@ -71,10 +71,20 @@
                                     <td>{{ item.endDate | date }}</td>
                                     <td>
                                         <div class="btn-group">
-                                            <a href="#" id="approve-notification-btn" data-toggle="modal"
+                                            <a href="#" data-toggle="modal"
                                                 data-target="#approve-notification-modal"
                                                 data-link="{{ path('event_notify', {'id': item.id}) }}"
-                                                class="btn btn-sm btn-outline-secondary">Notify
+                                                class="approve-notification-btn btn btn-sm btn-outline-secondary">Notify registered
+                                            </a>
+                                            <a href="#" data-toggle="modal"
+                                               data-target="#approve-notification-modal"
+                                               data-link="{{ path('event_notify_activated', {'id': item.id}) }}"
+                                               class="approve-notification-btn btn btn-sm btn-outline-secondary">Notify activated
+                                            </a>
+                                            <a href="#" data-toggle="modal"
+                                               data-target="#approve-notification-modal"
+                                               data-link="{{ path('event_notify_awarded', {'id': item.id}) }}"
+                                               class="approve-notification-btn btn btn-sm btn-outline-secondary">Notify awarded
                                             </a>
                                             <a href="{{ path('event_edit', {'id': item.id}) }}"
                                                class="btn btn-sm btn-outline-secondary">

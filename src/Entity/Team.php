@@ -52,6 +52,11 @@ class Team
      */
     private $place;
 
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $isAwardee;
+
     public function __construct()
     {
         $this->participants = new ArrayCollection();
@@ -169,6 +174,18 @@ class Team
     public function setPlace(?string $place): self
     {
         $this->place = $place;
+
+        return $this;
+    }
+
+    public function getIsAwardee(): ?bool
+    {
+        return $this->isAwardee;
+    }
+
+    public function setIsAwardee(?bool $isAwardee): self
+    {
+        $this->isAwardee = $isAwardee;
 
         return $this;
     }
