@@ -9,10 +9,18 @@
                 {% if is_granted('ROLE_SUPER_ADMIN') %}
                     <a href="{{ path('participant_edit', {'id': participant.id}) }}" class="btn btn-primary ml-3">Edit</a>
                 {% endif %}
-                <a href="{{ path('participant_feedback', {'id': participant.id}) }}"
-                   class="btn btn-primary ml-3">
-                    Feedback
-                </a>
+
+                {% if not participant.hasFeedbackByUser(app.user) %}
+                    <a href="{{ path('feedback_new', {'id': participant.id}) }}"
+                       class="btn btn-primary ml-3">
+                        Feedback
+                    </a>
+                {% else %}
+                    <a href="{{ path('feedback_edit', {'id': participant.id}) }}"
+                       class="btn btn-primary ml-3">
+                        Feedback
+                    </a>
+                {% endif %}
             </h2>
         </div>
     </div>
