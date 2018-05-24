@@ -74,7 +74,7 @@ class TeamController extends Controller
 
     /**
      * @Route("/{id}/edit", name="team_edit")
-     * @IsGranted("ROLE_ADMIN")
+     * @IsGranted("ROLE_SUPER_ADMIN")
      * @Method({"GET", "POST"})
      */
     public function editAction(Request $request, Team $team)

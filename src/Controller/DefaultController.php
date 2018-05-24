@@ -14,6 +14,6 @@ class DefaultController extends Controller
      */
     public function indexAction()
     {
-        return $this->redirectToRoute('event_list');
+        return $this->redirectToRoute('participant_list');
     }
 }
