@@ -2,11 +2,13 @@
 
 namespace App\Controller\Admin;
 
+
 use App\Entity\Media;
 use App\Entity\Participant;
-use App\Form\FeedbackType;
 use App\Form\MediaType;
+use App\Form\Model\PersonParticipantModel;
 use App\Form\ParticipantType;
+use App\Form\PersonParticipantFilterType;
 use App\Form\SearchParticipantType;
 use App\Helper\PaginatorTrait;
 use App\Repository\ParticipantRepository;
@@ -38,30 +40,56 @@ class ParticipantController extends Controller
      */
     public function listAction(Request $request, ParticipantRepository $repository)
     {
-        $searchForm = $this->createForm(SearchParticipantType::class);
-        $searchForm->handleRequest($request);
         $target = $repository->getAll();
+        $page_range = $this->getParameter('knp_paginator.page_range');
 
-        if ($searchForm->isSubmitted() && $searchForm->isValid()) {
-            $searchStr = $searchForm['lastname']->getData();
+        //search by lastname
+        $searchForm = $this->createForm(SearchParticipantType::class);
 
-            if (!empty($searchStr)) {
-                $target = $repository->searchByLastName($searchStr);
+        //filter
+        $model = new PersonParticipantModel();
+        $filterForm = $this->createForm(
+            PersonParticipantFilterType::class,
+            $model
+        );
+
+        if ($request->request->has('search_participant')) {
+            $searchForm->handleRequest($request);
+
+            if ($searchForm->isSubmitted() && $searchForm->isValid()) {
+                $searchStr = $searchForm['lastname']->getData();
+
+                if (!empty($searchStr)) {
+                    $target = $repository->searchByLastName($searchStr);
+                }
+
+                $page_range = 1000;
+            }
+        } elseif ($request->request->has('person_participant_filter')) {
+            $filterForm->handleRequest($request);
+
+            if ($filterForm->isSubmitted() && $filterForm->isValid()) {
+                if ($filterResult = $repository->filterByForm($model)) {
+                    $target = $filterResult;
+
+                    $page_range = 1000;
+                }
             }
         }
 
         $participants = $this->paginator->paginate(
             $target,
             $request->query->getInt('page', 1),
-            $this->getParameter('knp_paginator.page_range')
+            $page_range
         );
 
         return $this->render(
             'admin/participant/listParticipants.html.twig',
             [
+                'filter_form' => $filterForm->createView(),
                 'search_form' => $searchForm->createView(),
                 'title' => 'Participants',
-                'items' => $participants
+                'items' => $participants,
             ]
         );
     }
@@ -123,55 +151,6 @@ class ParticipantController extends Controller
         } else {
             throw new HttpException(400, 'Bad request.');
         }
-    }
-
-    /**
-     * @IsGranted("ROLE_SUPER_ADMIN")
-     * @Route("/notify", name="participant_notify")
-     * @Method({"GET", "POST"})
-     *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
-     */
-    public function notifyAction(Request $request, ParticipantRepository $repository, Notification $notification)
-    {
-        $form = $this->createFormBuilder()
-            ->setMethod('POST')
-            ->setAction($this->generateUrl('participant_notify'))
-            ->add('participants', HiddenType::class)
-            ->getForm();
-
-        if ($request->getMethod() == Request::METHOD_GET) {
-            return $this->render('admin/participant/notifyForm.html.twig', [
-                'form' => $form->createView(),
-            ]);
-        }
-
-        $form->handleRequest($request);
-
-        if ($form->isValid()) {
-            $participantsIds = json_decode($form['participants']->getData());
-
-            foreach ($participantsIds as $participantId) {
-                /** @var Participant $participant */
-                $participant = $repository->findOneBy(['id' => $participantId]);
-
-                $notification->notify($participant->getEvent()->getTitle(), $participant);
-                $participant->setIsNotified(true);
-
-                $em = $this->getDoctrine()->getManager();
-                $em->persist($participant);
-                $em->flush();
-            }
-
-            return $this->redirectToRoute('participant_list');
-        }
-
-        return $this->render('admin/participant/notifyForm.html.twig', [
-            'form' => $form->createView(),
-        ]);
     }
 
     /**
@@ -241,28 +220,52 @@ class ParticipantController extends Controller
         ]);
     }
 
-    /**
-     * @IsGranted("ROLE_ADMIN")
-     * @Route("/{id}/feedback", name="participant_feedback", methods="GET|POST")
-     */
-    public function feedback(Request $request, Participant $participant)
-    {
-        $form = $this->createForm(FeedbackType::class, $participant);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
-
-            $this->addFlash("success", "Feedback updated");
-
-            return $this->redirectToRoute('participant_feedback', ['id' => $participant->getId()]);
-        }
-
-        return $this->render('admin/participant/feedback.html.twig', [
-            'title' => "Edit participant feedback",
-            'home_path' => 'participant_list',
-            'participant' => $participant,
-            'form' => $form->createView(),
-        ]);
-    }
+//    /**
+//     * @IsGranted("ROLE_SUPER_ADMIN")
+//     * @Route("/notify", name="participant_notify")
+//     * @Method({"GET", "POST"})
+//     *
+//     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+//     * @throws \Twig_Error_Loader
+//     * @throws \Twig_Error_Runtime
+//     * @throws \Twig_Error_Syntax
+//     */
+//    public function notifyAction(Request $request, ParticipantRepository $repository, Notification $notification)
+//    {
+//        $form = $this->createFormBuilder()
+//            ->setMethod('POST')
+//            ->setAction($this->generateUrl('participant_notify'))
+//            ->add('participants', HiddenType::class)
+//            ->getForm();
+//
+//        if ($request->getMethod() == Request::METHOD_GET) {
+//            return $this->render('admin/participant/notifyForm.html.twig', [
+//                'form' => $form->createView(),
+//            ]);
+//        }
+//
+//        $form->handleRequest($request);
+//
+//        if ($form->isValid()) {
+//            $participantsIds = json_decode($form['participants']->getData());
+//
+//            foreach ($participantsIds as $participantId) {
+//                /** @var Participant $participant */
+//                $participant = $repository->findOneBy(['id' => $participantId]);
+//
+//                $notification->notify($participant->getEvent()->getTitle(), $participant);
+//                $participant->setIsNotified(true);
+//
+//                $em = $this->getDoctrine()->getManager();
+//                $em->persist($participant);
+//                $em->flush();
+//            }
+//
+//            return $this->redirectToRoute('participant_list');
+//        }
+//
+//        return $this->render('admin/participant/notifyForm.html.twig', [
+//            'form' => $form->createView(),
+//        ]);
+//    }
 }

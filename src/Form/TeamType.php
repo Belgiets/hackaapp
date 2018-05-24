@@ -19,6 +19,7 @@ class TeamType extends AbstractType
             ->add('name')
             ->add('place')
             ->add('idea')
+            ->add('isAwardee')
             ->add('event', EntityType::class, [
                 'class' => Event::class,
                 'choice_label' => 'title'

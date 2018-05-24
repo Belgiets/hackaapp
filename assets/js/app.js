@@ -59,7 +59,7 @@ $(document).ready(function () {
   //   $('#form_participants').val(JSON.stringify(personsIds))
   // })
 
-  $('#approve-notification-btn').on('click', function() {
+  $('.approve-notification-btn').on('click', function() {
     $('#finally-notify').attr('href', $(this).attr('data-link'))
   })
 })

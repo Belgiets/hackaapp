@@ -5,8 +5,11 @@ namespace App\Repository;
 use App\Entity\Event;
 use App\Entity\Participant;
 use App\Entity\Person;
+use App\Form\Model\PersonParticipantModel;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
 
 /**
  * @method Participant|null find($id, $lockMode = null, $lockVersion = null)
@@ -55,6 +58,52 @@ class ParticipantRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult()
             ;
+    }
+
+    public function filterByForm(PersonParticipantModel $model)
+    {
+        $qb = $this->createQueryBuilder('participant')
+            ->leftJoin('participant.person', 'person')
+            ->addOrderBy('person.lastName', 'ASC');
+
+        if ($model->isEmployment() !== null) {
+            $qb->andWhere('person.employment = :isEmployment')
+                ->setParameter('isEmployment', $model->isEmployment());
+        }
+
+        if ($model->isNotified() !== null) {
+            $qb->andWhere('participant.isNotified = :isNotified')
+                ->setParameter('isNotified', $model->isNotified());
+        }
+
+        if ($model->isInternship() !== null) {
+            $qb->andWhere('person.internship = :isInternship')
+                ->setParameter('isInternship', $model->isInternship());
+        }
+
+        if ($model->isActive() !== null) {
+            $qb->andWhere('participant.isActive = :isActive')
+                ->setParameter('isActive', $model->isActive());
+        }
+
+        if ($model->getEvent() !== null) {
+            $qb->andWhere('participant.event = :event')
+                ->setParameter('event', $model->getEvent());
+        }
+
+        if ($model->getProjectType() !== null) {
+            $qb->andWhere('participant.projectType = :projectType')
+                ->setParameter('projectType', $model->getProjectType());
+        }
+
+        if ($model->getTeam() !== null) {
+            $qb->andWhere('participant.team = :team')
+                ->setParameter('team', $model->getTeam());
+        }
+
+        $qb->getQuery();
+
+        return $qb;
     }
 //    /**
 //     * @return Participant[] Returns an array of Participant objects
