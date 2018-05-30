@@ -249,7 +249,7 @@ class Participant
     {
         foreach ($this->getFeedbacks()->toArray() as $feedback) {
             if ($feedback->getMentor()->getId() == $user->getId()) {
-                return true;
+                return $feedback;
             }
         }
 

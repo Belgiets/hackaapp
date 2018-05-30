@@ -73,10 +73,11 @@ class FeedbackController extends Controller
     /**
      * @Route("/edit/{id}", name="feedback_edit", methods="GET|POST")
      */
-    public function edit(Request $request, Participant $participant, FeedbackRepository $repository)
+    public function edit(Request $request, Feedback $feedback)
     {
         $user = $this->getUser();
-        $feedback = $repository->findOneBy(['participant' => $participant]);
+        $participant = $feedback->getParticipant();
+
         $form = $this->createForm(
             FeedbackType::class,
             $feedback,
