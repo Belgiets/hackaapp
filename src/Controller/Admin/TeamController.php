@@ -104,7 +104,7 @@ class TeamController extends Controller
      * @IsGranted("ROLE_SUPER_ADMIN")
      * @Method({"GET", "POST"})
      */
-    public function deleteAction(Request $request, Team $team)
+    public function deleteAction(Team $team)
     {
         $em = $this->getDoctrine()->getManager();
         $em->remove($team);

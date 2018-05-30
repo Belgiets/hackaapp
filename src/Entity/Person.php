@@ -86,9 +86,15 @@ class Person
      */
     private $photo;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Technology", mappedBy="persons")
+     */
+    private $technologies;
+
     public function __construct()
     {
         $this->participants = new ArrayCollection();
+        $this->technologies = new ArrayCollection();
     }
 
     public function getId()
@@ -262,5 +268,33 @@ class Person
     public function __toString()
     {
         return $this->firstName . ' ' . $this->lastName;
+    }
+
+    /**
+     * @return Collection|Technology[]
+     */
+    public function getTechnologies(): Collection
+    {
+        return $this->technologies;
+    }
+
+    public function addTechnology(Technology $technology): self
+    {
+        if (!$this->technologies->contains($technology)) {
+            $this->technologies[] = $technology;
+            $technology->addPerson($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTechnology(Technology $technology): self
+    {
+        if ($this->technologies->contains($technology)) {
+            $this->technologies->removeElement($technology);
+            $technology->removePerson($this);
+        }
+
+        return $this;
     }
 }
