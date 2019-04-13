@@ -125,17 +125,20 @@
                                     </td>
                                     <td>
                                         <div class="btn-group">
-                                            {% if not item.hasFeedbackByUser(app.user) %}
-                                                <a href="{{ path('feedback_new', {'id': item.id}) }}"
-                                                    class="btn btn-sm btn-outline-secondary">
+                                            {% set feedback = item.hasFeedbackByUser(app.user) %}
+
+                                            {% if feedback %}
+                                                <a href="{{ path('feedback_edit', {'id': feedback.id}) }}"
+                                                   class="btn btn-sm btn-outline-secondary">
                                                     Feedback
                                                 </a>
                                             {% else %}
-                                                <a href="{{ path('feedback_edit', {'id': item.id}) }}"
+                                                <a href="{{ path('feedback_new', {'id': item.id}) }}"
                                                    class="btn btn-sm btn-outline-secondary">
                                                     Feedback
                                                 </a>
                                             {% endif %}
+
                                             {% if is_granted('ROLE_SUPER_ADMIN') %}
                                                 <a href="{{ path('participant_show', {'id': item.id}) }}"
                                                    class="btn btn-sm btn-outline-secondary">
