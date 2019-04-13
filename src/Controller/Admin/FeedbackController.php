@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\Feedback;
 use App\Entity\Participant;
 use App\Form\FeedbackType;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -26,6 +27,7 @@ class FeedbackController extends AbstractController
 
     /**
      * @Route("/new/{id}", name="feedback_new", methods={"GET","POST"})
+     * @Security("is_granted('ROLE_ADMIN)")
      */
     public function new(Request $request, Participant $participant)
     {
@@ -71,6 +73,7 @@ class FeedbackController extends AbstractController
 //
     /**
      * @Route("/edit/{id}", name="feedback_edit", methods={"GET","POST"})
+     * @Security("is_granted('FB_EDIT', feedback)")
      */
     public function edit(Request $request, Feedback $feedback)
     {
