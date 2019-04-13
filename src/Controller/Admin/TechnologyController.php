@@ -6,7 +6,7 @@ use App\Entity\Technology;
 use App\Form\TechnologyType;
 use App\Helper\PaginatorTrait;
 use App\Repository\TechnologyRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -16,7 +16,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
  * @IsGranted("ROLE_SUPER_ADMIN")
  * @Route("/admin/technology")
  */
-class TechnologyController extends Controller
+class TechnologyController extends AbstractController
 {
     use PaginatorTrait;
 
@@ -41,7 +41,7 @@ class TechnologyController extends Controller
     }
 
     /**
-     * @Route("/new", name="technology_new", methods="GET|POST")
+     * @Route("/new", name="technology_new", methods={"GET","POST"})
      */
     public function new(Request $request): Response
     {
@@ -68,7 +68,7 @@ class TechnologyController extends Controller
     }
 
     /**
-     * @Route("/{id}/edit", name="technology_edit", methods="GET|POST")
+     * @Route("/{id}/edit", name="technology_edit", methods={"GET","POST"})
      */
     public function edit(Request $request, Technology $technology): Response
     {
@@ -92,7 +92,7 @@ class TechnologyController extends Controller
     }
 
     /**
-     * @Route("/{id}", name="technology_delete", methods="DELETE")
+     * @Route("/{id}", name="technology_delete", methods={"DELETE"})
      */
     public function delete(Request $request, Technology $technology): Response
     {

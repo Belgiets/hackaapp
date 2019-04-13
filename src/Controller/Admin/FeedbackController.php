@@ -5,8 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\Feedback;
 use App\Entity\Participant;
 use App\Form\FeedbackType;
-use App\Repository\FeedbackRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -15,7 +14,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
  * @Route("/admin/feedback")
  * @IsGranted("ROLE_ADMIN")
  */
-class FeedbackController extends Controller
+class FeedbackController extends AbstractController
 {
 //    /**
 //     * @Route("/", name="feedback_index", methods="GET")
@@ -26,7 +25,7 @@ class FeedbackController extends Controller
 //    }
 
     /**
-     * @Route("/new/{id}", name="feedback_new", methods="GET|POST")
+     * @Route("/new/{id}", name="feedback_new", methods={"GET","POST"})
      */
     public function new(Request $request, Participant $participant)
     {
@@ -71,7 +70,7 @@ class FeedbackController extends Controller
 //    }
 //
     /**
-     * @Route("/edit/{id}", name="feedback_edit", methods="GET|POST")
+     * @Route("/edit/{id}", name="feedback_edit", methods={"GET","POST"})
      */
     public function edit(Request $request, Feedback $feedback)
     {

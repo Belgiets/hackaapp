@@ -5,11 +5,10 @@ namespace App\Controller\Admin;
 use App\Entity\User\AdminUser;
 use App\Form\AdminUserType;
 use App\Helper\PaginatorTrait;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 /**
@@ -19,13 +18,12 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
  * @Route("/admin/admin-user")
  * @IsGranted("ROLE_SUPER_ADMIN")
  */
-class AdminUserController extends Controller
+class AdminUserController extends AbstractController
 {
     use PaginatorTrait;
 
     /**
-     * @Route("", name="admin_list")
-     * @Method({"GET"})
+     * @Route("", name="admin_list", methods={"GET"})
      */
     public function listAction(Request $request)
     {
@@ -45,8 +43,7 @@ class AdminUserController extends Controller
     }
 
     /**
-     * @Route("/new", name="admin_new")
-     * @Method({"GET", "POST"})
+     * @Route("/new", name="admin_new", methods={"GET","POST"})
      */
     public function newAction(Request $request, UserPasswordEncoderInterface $encoder)
     {
@@ -74,8 +71,7 @@ class AdminUserController extends Controller
     }
 
     /**
-     * @Route("/{id}/edit", name="admin_edit")
-     * @Method({"GET", "POST"})
+     * @Route("/{id}/edit", name="admin_edit", methods={"GET","POST"})
      */
     public function editAction(Request $request, UserPasswordEncoderInterface $encoder, AdminUser $admin)
     {
@@ -100,8 +96,7 @@ class AdminUserController extends Controller
     }
 
     /**
-     * @Route("/{id}/delete", name="admin_delete")
-     * @Method({"GET", "POST"})
+     * @Route("/{id}/delete", name="admin_delete", methods={"GET","POST"})
      */
     public function deleteAction(Request $request, AdminUser $admin)
     {

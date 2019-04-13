@@ -5,11 +5,10 @@ namespace App\Controller\Admin;
 use App\Entity\Person;
 use App\Form\PersonType;
 use App\Helper\PaginatorTrait;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
@@ -19,13 +18,12 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
  * @Route("/admin/person")
  * @IsGranted("ROLE_SUPER_ADMIN")
  */
-class PersonController extends Controller
+class PersonController extends AbstractController
 {
     use PaginatorTrait;
 
     /**
-     * @Route("", name="person_list")
-     * @Method({"GET"})
+     * @Route("", name="person_list", methods={"GET"})
      */
     public function listAction(Request $request)
     {
@@ -45,8 +43,7 @@ class PersonController extends Controller
     }
 
     /**
-     * @Route("/{id}/view", name="person_view")
-     * @Method({"GET"})
+     * @Route("/{id}/view", name="person_view", methods={"GET"})
      */
     public function viewAction(Person $person)
     {
@@ -59,8 +56,7 @@ class PersonController extends Controller
     }
 
     /**
-     * @Route("/new", name="person_new")
-     * @Method({"GET", "POST"})
+     * @Route("/new", name="person_new", methods={"GET","POST"})
      */
     public function newAction(Request $request, SessionInterface $session)
     {
@@ -89,8 +85,7 @@ class PersonController extends Controller
     }
 
     /**
-     * @Route("/{id}/edit", name="person_edit")
-     * @Method({"GET", "POST"})
+     * @Route("/{id}/edit", name="person_edit", methods={"GET","POST"})
      */
     public function editAction(Request $request, Person $person)
     {
@@ -118,8 +113,7 @@ class PersonController extends Controller
     }
 
     /**
-     * @Route("/{id}/delete", name="person_delete")
-     * @Method({"GET", "POST"})
+     * @Route("/{id}/delete", name="person_delete", methods={"GET","POST"})
      */
     public function deleteAction(Request $request, Person $event)
     {

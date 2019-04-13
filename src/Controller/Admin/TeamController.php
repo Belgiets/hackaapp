@@ -5,10 +5,9 @@ namespace App\Controller\Admin;
 use App\Entity\Team;
 use App\Form\TeamType;
 use App\Helper\PaginatorTrait;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
@@ -17,14 +16,13 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
  *
  * @Route("/admin/team")
  */
-class TeamController extends Controller
+class TeamController extends AbstractController
 {
     use PaginatorTrait;
 
     /**
-     * @Route("", name="team_list")
+     * @Route("", name="team_list", methods={"GET"})
      * @IsGranted("ROLE_ADMIN")
-     * @Method({"GET"})
      */
     public function listAction(Request $request)
     {
@@ -44,9 +42,8 @@ class TeamController extends Controller
     }
 
     /**
-     * @Route("/new", name="team_new")
+     * @Route("/new", name="team_new", methods={"GET","POST"})
      * @IsGranted("ROLE_SUPER_ADMIN")
-     * @Method({"GET", "POST"})
      */
     public function newAction(Request $request)
     {
@@ -73,9 +70,8 @@ class TeamController extends Controller
     }
 
     /**
-     * @Route("/{id}/edit", name="team_edit")
+     * @Route("/{id}/edit", name="team_edit", methods={"GET","POST"})
      * @IsGranted("ROLE_SUPER_ADMIN")
-     * @Method({"GET", "POST"})
      */
     public function editAction(Request $request, Team $team)
     {
@@ -100,9 +96,8 @@ class TeamController extends Controller
     }
 
     /**
-     * @Route("/{id}/delete", name="team_delete")
+     * @Route("/{id}/delete", name="team_delete", methods={"GET","POST"})
      * @IsGranted("ROLE_SUPER_ADMIN")
-     * @Method({"GET", "POST"})
      */
     public function deleteAction(Team $team)
     {
