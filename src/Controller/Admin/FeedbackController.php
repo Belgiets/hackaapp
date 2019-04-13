@@ -27,7 +27,7 @@ class FeedbackController extends AbstractController
 
     /**
      * @Route("/new/{id}", name="feedback_new", methods={"GET","POST"})
-     * @Security("is_granted('ROLE_ADMIN)")
+     * @Security("is_granted('FB_NEW', participant)")
      */
     public function new(Request $request, Participant $participant)
     {

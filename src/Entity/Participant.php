@@ -253,6 +253,17 @@ class Participant
             }
         }
 
-        return false;
+        return null;
+    }
+
+    public function getFeedbackId($user)
+    {
+        foreach ($this->getFeedbacks() as $feedback) {
+            if ($feedback->getMentor() === $user) {
+                return $feedback->getId();
+            }
+        }
+
+        return null;
     }
 }
