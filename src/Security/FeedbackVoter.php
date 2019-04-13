@@ -5,6 +5,7 @@ namespace App\Security;
 
 
 use App\Entity\Feedback;
+use App\Entity\Participant;
 use App\Entity\User\BaseUser;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -13,7 +14,8 @@ use Symfony\Component\Security\Core\Security;
 class FeedbackVoter extends Voter
 {
     const ACTIONS = [
-        'FB_EDIT' => 'FB_EDIT'
+        'FB_EDIT' => 'FB_EDIT',
+        'FB_NEW' => 'FB_NEW'
     ];
 
     private $security;
@@ -30,12 +32,11 @@ class FeedbackVoter extends Voter
             return false;
         }
 
-        // only vote on Post objects inside this voter
-        if (!$subject instanceof Feedback) {
-            return false;
+        if ($subject instanceof Feedback || $subject instanceof Participant) {
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
@@ -51,12 +52,17 @@ class FeedbackVoter extends Voter
             return true;
         }
 
-        /** @var Feedback $feedback */
-        $feedback = $subject;
-
         switch ($attribute) {
             case self::ACTIONS['FB_EDIT']:
+                /** @var Feedback $feedback */
+                $feedback = $subject;
+
                 return $this->canEdit($feedback, $user);
+            case self::ACTIONS['FB_NEW']:
+                /** @var Participant $participant */
+                $participant = $subject;
+
+                return $this->canNew($participant, $user);
         }
 
         throw new \LogicException('This code should not be reached!');
@@ -64,8 +70,14 @@ class FeedbackVoter extends Voter
 
     private function canEdit(Feedback $feedback, BaseUser $user)
     {
-        // this assumes that the data object has a getOwner() method
-        // to get the entity of the user who owns this data object
         return $user === $feedback->getOwner();
+    }
+
+    private function canNew(Participant $participant, BaseUser $user)
+    {
+        $team = $participant->getTeam();
+        $mentors = $team->getMentors();
+
+        return $mentors->contains($user);
     }
 }

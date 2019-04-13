@@ -7,18 +7,19 @@
             <h2 class="h5 no-margin-bottom">
                 {{ participant.person.firstname~' '~participant.person.lastname }}
                 {% if is_granted('ROLE_SUPER_ADMIN') %}
-                    <a href="{{ path('participant_edit', {'id': participant.id}) }}" class="btn btn-primary ml-3">Edit</a>
+                    <a href="{{ path('participant_edit', {'id': participant.id}) }}" class="btn btn-primary ml-3">
+                        Edit
+                    </a>
                 {% endif %}
 
-                {% if not participant.hasFeedbackByUser(app.user) %}
-                    <a href="{{ path('feedback_new', {'id': participant.id}) }}"
+                {% if participant.getFeedbackId(app.user) %}
+                    <a href="{{ path('feedback_edit', {'id': participant.getFeedbackId(app.user)}) }}"
                        class="btn btn-primary ml-3">
-                        Feedback
+                        Edit feedback
                     </a>
-                {% else %}
-                    <a href="{{ path('feedback_edit', {'id': participant.id}) }}"
-                       class="btn btn-primary ml-3">
-                        Feedback
+                {% elseif is_granted("FB_NEW", participant) %}
+                    <a href="{{ path('feedback_new', {'id': participant.id}) }}" class="btn btn-primary ml-3">
+                        Add feedback
                     </a>
                 {% endif %}
             </h2>
