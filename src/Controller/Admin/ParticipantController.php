@@ -4,14 +4,14 @@ namespace App\Controller\Admin;
 
 
 use App\Entity\Media;
-use App\Entity\Participant;
+use App\Entity\Participant\BaseParticipant;
+use App\Repository\Participant\BaseParticipantRepository;
 use App\Form\MediaType;
 use App\Form\Model\PersonParticipantModel;
 use App\Form\ParticipantType;
 use App\Form\PersonParticipantFilterType;
 use App\Form\SearchParticipantType;
 use App\Helper\PaginatorTrait;
-use App\Repository\ParticipantRepository;
 use App\Repository\PersonRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,7 +34,7 @@ class ParticipantController extends AbstractController
      * @IsGranted("ROLE_ADMIN")
      * @Route("", name="participant_list", methods={"GET","POST"})
      */
-    public function listAction(Request $request, ParticipantRepository $repository)
+    public function listAction(Request $request, BaseParticipantRepository $repository)
     {
         $target = $repository->getAll();
         $page_range = $this->getParameter('knp_paginator.page_range');
@@ -100,7 +100,7 @@ class ParticipantController extends AbstractController
             /** @var $em \Doctrine\Common\Persistence\ObjectManager */
             $em = $entityManager = $this->getDoctrine()->getManager();
 
-            $participant = $em->getRepository(Participant::class)->findOneBy(['activationCode' => $code]);
+            $participant = $em->getRepository(BaseParticipant::class)->findOneBy(['activationCode' => $code]);
 
             if ($participant) {
                 $person = $participant->getPerson();
@@ -154,7 +154,7 @@ class ParticipantController extends AbstractController
      */
     public function new(Request $request, SessionInterface $session, PersonRepository $personRepository)
     {
-        $participant = new Participant();
+        $participant = new BaseParticipant();
         $form = $this->createForm(ParticipantType::class, $participant, [
             'person_id' => $session->get('person_id')
         ]);
@@ -180,7 +180,7 @@ class ParticipantController extends AbstractController
      * @IsGranted("ROLE_ADMIN")
      * @Route("/{id}", name="participant_show", methods={"GET"})
      */
-    public function show(Participant $participant)
+    public function show(BaseParticipant $participant)
     {
         return $this->render('admin/participant/detailParticipant.html.twig', [
             'person' => $participant->getPerson(),
@@ -192,7 +192,7 @@ class ParticipantController extends AbstractController
      * @IsGranted("ROLE_ADMIN")
      * @Route("/{id}/edit", name="participant_edit", methods={"GET","POST"})
      */
-    public function edit(Request $request, Participant $participant)
+    public function edit(Request $request, BaseParticipant $participant)
     {
         $form = $this->createForm(ParticipantType::class, $participant, [
             'edit' => true

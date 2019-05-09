@@ -3,7 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Feedback;
-use App\Entity\Participant;
+use App\Entity\Participant\HackathonParticipant;
 use App\Form\FeedbackType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -29,7 +29,7 @@ class FeedbackController extends AbstractController
      * @Route("/new/{id}", name="feedback_new", methods={"GET","POST"})
      * @Security("is_granted('FB_NEW', participant)")
      */
-    public function new(Request $request, Participant $participant)
+    public function new(Request $request, HackathonParticipant $participant)
     {
         $user = $this->getUser();
         $feedback = new Feedback();

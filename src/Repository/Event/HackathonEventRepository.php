@@ -1,22 +1,22 @@
 <?php
 
-namespace App\Repository;
+namespace App\Repository\Event;
 
-use App\Entity\Event;
+use App\Entity\HackathonEvent;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
- * @method Event|null find($id, $lockMode = null, $lockVersion = null)
- * @method Event|null findOneBy(array $criteria, array $orderBy = null)
- * @method Event[]    findAll()
- * @method Event[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method HackathonEvent|null find($id, $lockMode = null, $lockVersion = null)
+ * @method HackathonEvent|null findOneBy(array $criteria, array $orderBy = null)
+ * @method HackathonEvent[]    findAll()
+ * @method HackathonEvent[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class EventRepository extends ServiceEntityRepository
+class HackathonEventRepository extends ServiceEntityRepository
 {
     public function __construct(RegistryInterface $registry)
     {
-        parent::__construct($registry, Event::class);
+        parent::__construct($registry, HackathonEvent::class);
     }
 
     public function getAll()

@@ -1,96 +1,32 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Event;
 
+use App\Entity\Participant\HackathonParticipant;
+use App\Entity\Team;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Knp\DoctrineBehaviors\Model\Timestampable\Timestampable;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\EventRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\Event\HackathonEventRepository")
  */
-class Event
+class HackathonEvent extends BaseEvent
 {
-    use Timestampable;
-
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
-    private $id;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $title;
-
-    /**
-     * @ORM\Column(type="date")
-     */
-    private $startDate;
-
-    /**
-     * @ORM\Column(type="date")
-     */
-    private $endDate;
-
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Team", mappedBy="event")
      */
     private $teams;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Participant", mappedBy="event")
+     * @ORM\OneToMany(targetEntity="App\Entity\Participant\HackathonParticipant", mappedBy="event")
      */
     private $participants;
 
     public function __construct()
     {
-        $this->teams = new ArrayCollection();
         $this->participants = new ArrayCollection();
-    }
-
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    public function getTitle(): ?string
-    {
-        return $this->title;
-    }
-
-    public function setTitle(string $title): self
-    {
-        $this->title = $title;
-
-        return $this;
-    }
-
-    public function getStartDate(): ?\DateTimeInterface
-    {
-        return $this->startDate;
-    }
-
-    public function setStartDate($startDate): self
-    {
-        $this->startDate = $startDate;
-
-        return $this;
-    }
-
-    public function getEndDate(): ?\DateTimeInterface
-    {
-        return $this->endDate;
-    }
-
-    public function setEndDate($endDate): self
-    {
-        $this->endDate = $endDate;
-
-        return $this;
+        $this->teams = new ArrayCollection();
     }
 
     /**
@@ -125,14 +61,14 @@ class Event
     }
 
     /**
-     * @return Collection|Participant[]
+     * @return Collection|HackathonParticipant[]
      */
     public function getParticipants(): Collection
     {
         return $this->participants;
     }
 
-    public function addParticipant(Participant $participant): self
+    public function addParticipant(HackathonParticipant $participant): self
     {
         if (!$this->participants->contains($participant)) {
             $this->participants[] = $participant;
@@ -142,7 +78,7 @@ class Event
         return $this;
     }
 
-    public function removeParticipant(Participant $participant): self
+    public function removeParticipant(HackathonParticipant $participant): self
     {
         if ($this->participants->contains($participant)) {
             $this->participants->removeElement($participant);
@@ -153,10 +89,5 @@ class Event
         }
 
         return $this;
-    }
-
-    public function __toString()
-    {
-        return $this->title;
     }
 }

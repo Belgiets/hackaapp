@@ -2,7 +2,7 @@
 
 namespace App\Form;
 
-use App\Entity\Participant;
+use App\Entity\BaseParticipant;
 use App\Entity\Person;
 use App\Repository\PersonRepository;
 use App\Service\CsvParser;
@@ -96,7 +96,7 @@ class ParticipantType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'data_class' => Participant::class,
+                'data_class' => BaseParticipant::class,
                 'edit' => false,
                 'person_id' => null,
             ]

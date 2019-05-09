@@ -2,7 +2,7 @@
 
 namespace App\Form;
 
-use App\Entity\Event;
+use App\Entity\HackathonEvent;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -23,7 +23,7 @@ class EventType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Event::class,
+            'data_class' => HackathonEvent::class,
             'edit' => false,
         ]);
     }

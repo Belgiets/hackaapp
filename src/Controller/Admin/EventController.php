@@ -2,8 +2,9 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\Event;
-use App\Entity\Participant;
+use App\Entity\Event\BaseEvent;
+use App\Entity\HackathonEvent;
+use App\Entity\BaseParticipant;
 use App\Form\EventType;
 use App\Helper\PaginatorTrait;
 use App\Repository\ParticipantRepository;
@@ -31,7 +32,7 @@ class EventController extends AbstractController
     public function listAction(Request $request)
     {
         $events = $this->paginator->paginate(
-            $this->getDoctrine()->getRepository(Event::class)->getAll(),
+            $this->getDoctrine()->getRepository(BaseEvent::class)->getAll(),
             $request->query->getInt('page', 1),
             $this->getParameter('knp_paginator.page_range')
         );
@@ -50,7 +51,7 @@ class EventController extends AbstractController
      */
     public function newAction(Request $request)
     {
-        $event = new Event();
+        $event = new BaseEvent();
         $form = $this->createForm(EventType::class, $event);
         $form->handleRequest($request);
 
@@ -75,7 +76,7 @@ class EventController extends AbstractController
     /**
      * @Route("/{id}/edit", name="event_edit", methods={"GET","POST"})
      */
-    public function editAction(Request $request, Event $event)
+    public function editAction(Request $request, BaseEvent $event)
     {
         $form = $this->createForm(EventType::class, $event, ['edit' => true]);
         $form->handleRequest($request);
@@ -100,7 +101,7 @@ class EventController extends AbstractController
     /**
      * @Route("/{id}/delete", name="event_delete", methods={"GET","POST"})
      */
-    public function deleteAction(Request $request, Event $event)
+    public function deleteAction(Request $request, BaseEvent $event)
     {
         $em = $this->getDoctrine()->getManager();
         $em->remove($event);
@@ -112,14 +113,14 @@ class EventController extends AbstractController
     /**
      * @Route("/{id}/notify", name="event_notify", methods={"GET","POST"})
      *
-     * @param Event $event
+     * @param BaseEvent $event
      * @param Notification $notification
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function notify(Event $event, Notification $notification)
+    public function notify(BaseEvent $event, Notification $notification)
     {
         $result = $notification->notifyByEvent($event);
 
@@ -128,52 +129,52 @@ class EventController extends AbstractController
         return $this->redirectToRoute('event_list');
     }
 
-    /**
-     * @IsGranted("ROLE_SUPER_ADMIN")
-     * @Route("/{id}/notify-activated", name="event_notify_activated", methods={"GET","POST"})
-     */
-    public function notifyActivated(Event $event, ParticipantRepository $repository, Notification $notification)
-    {
-        $activated = $repository->findBy(['event' => $event, 'isActive' => true]);
+//    /**
+//     * @IsGranted("ROLE_SUPER_ADMIN")
+//     * @Route("/{id}/notify-activated", name="event_notify_activated", methods={"GET","POST"})
+//     */
+//    public function notifyActivated(BaseEvent $event, ParticipantRepository $repository, Notification $notification)
+//    {
+//        $activated = $repository->findBy(['event' => $event, 'isActive' => true]);
+//
+//        /** @var BaseParticipant $participant */
+//        foreach ($activated as $participant) {
+//            $notification->notify(
+//                $participant->getEvent()->getTitle(),
+//                $participant->getPerson()->getEmail(),
+//                'emails/notifyActivated.html.twig'
+//            );
+//        }
+//
+//        $this->addFlash('success', 'Notified activated participants');
+//
+//        return $this->redirectToRoute('event_list');
+//    }
 
-        /** @var Participant $participant */
-        foreach ($activated as $participant) {
-            $notification->notify(
-                $participant->getEvent()->getTitle(),
-                $participant->getPerson()->getEmail(),
-                'emails/notifyActivated.html.twig'
-            );
-        }
-
-        $this->addFlash('success', 'Notified activated participants');
-
-        return $this->redirectToRoute('event_list');
-    }
-
-    /**
-     * @IsGranted("ROLE_SUPER_ADMIN")
-     * @Route("/{id}/notify-awarded", name="event_notify_awarded", methods={"GET","POST"})
-     */
-    public function notifyAwarded(Event $event, TeamRepository $repository, Notification $notification)
-    {
-        $teams = $repository->findBy(['event' => $event, 'isAwardee' => true]);
-
-        foreach ($teams as $team) {
-            $participants = $team->getParticipants();
-
-            foreach ($participants as $participant) {
-                if ($participant->isActive()) {
-                    $notification->notify(
-                        $participant->getEvent()->getTitle(),
-                        $participant->getPerson()->getEmail(),
-                        'emails/notifyAwarded.html.twig'
-                    );
-                }
-            }
-        }
-
-        $this->addFlash('success', "Notified awarded team's participants");
-
-        return $this->redirectToRoute('event_list');
-    }
+//    /**
+//     * @IsGranted("ROLE_SUPER_ADMIN")
+//     * @Route("/{id}/notify-awarded", name="event_notify_awarded", methods={"GET","POST"})
+//     */
+//    public function notifyAwarded(HackathonEvent $event, TeamRepository $repository, Notification $notification)
+//    {
+//        $teams = $repository->findBy(['event' => $event, 'isAwardee' => true]);
+//
+//        foreach ($teams as $team) {
+//            $participants = $team->getParticipants();
+//
+//            foreach ($participants as $participant) {
+//                if ($participant->isActive()) {
+//                    $notification->notify(
+//                        $participant->getEvent()->getTitle(),
+//                        $participant->getPerson()->getEmail(),
+//                        'emails/notifyAwarded.html.twig'
+//                    );
+//                }
+//            }
+//        }
+//
+//        $this->addFlash('success', "Notified awarded team's participants");
+//
+//        return $this->redirectToRoute('event_list');
+//    }
 }

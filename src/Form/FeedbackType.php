@@ -3,7 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Feedback;
-use App\Entity\Participant;
+use App\Entity\BaseParticipant;
 use App\Entity\User\AdminUser;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -45,7 +45,7 @@ class FeedbackType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Feedback::class,
-            'participant' => Participant::class,
+            'participant' => BaseParticipant::class,
             'user' => AdminUser::class
         ]);
     }

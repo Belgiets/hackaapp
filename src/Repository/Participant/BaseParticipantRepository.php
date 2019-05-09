@@ -1,27 +1,27 @@
 <?php
 
-namespace App\Repository;
+namespace App\Repository\Participant;
 
-use App\Entity\Event;
-use App\Entity\Participant;
+use App\Entity\HackathonEvent;
 use App\Entity\Person;
 use App\Form\Model\PersonParticipantModel;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
+use App\Entity\Participant\BaseParticipant;
 
 /**
- * @method Participant|null find($id, $lockMode = null, $lockVersion = null)
- * @method Participant|null findOneBy(array $criteria, array $orderBy = null)
- * @method Participant[]    findAll()
- * @method Participant[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method BaseParticipant|null find($id, $lockMode = null, $lockVersion = null)
+ * @method BaseParticipant|null findOneBy(array $criteria, array $orderBy = null)
+ * @method BaseParticipant[]    findAll()
+ * @method BaseParticipant[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ParticipantRepository extends ServiceEntityRepository
+class BaseParticipantRepository extends ServiceEntityRepository
 {
     public function __construct(RegistryInterface $registry)
     {
-        parent::__construct($registry, Participant::class);
+        parent::__construct($registry, BaseParticipant::class);
     }
 
     public function getAll()
@@ -44,7 +44,7 @@ class ParticipantRepository extends ServiceEntityRepository
 
     /**
      * @param Person $person
-     * @param Event $event
+     * @param HackathonEvent $event
      * @return mixed
      * @throws \Doctrine\ORM\NonUniqueResultException
      */

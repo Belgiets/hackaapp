@@ -4,7 +4,6 @@ namespace App\Form\Model;
 
 
 use App\Entity\ProjectType;
-use Doctrine\Common\Collections\Collection;
 
 class PersonParticipantModel
 {
@@ -29,7 +28,7 @@ class PersonParticipantModel
     private $isActive;
 
     /**
-     * @var \App\Entity\Event
+     * @var \App\Entity\Event\BaseEvent
      */
     private $event;
 
@@ -108,7 +107,7 @@ class PersonParticipantModel
     }
 
     /**
-     * @return \App\Entity\Event
+     * @return \App\Entity\Event\BaseEvent
      */
     public function getEvent()
     {
@@ -116,9 +115,9 @@ class PersonParticipantModel
     }
 
     /**
-     * @param \App\Entity\Event $event
+     * @param \App\Entity\Event\BaseEvent $event
      */
-    public function setEvent(\App\Entity\Event $event): void
+    public function setEvent(\App\Entity\Event\BaseEvent $event): void
     {
         $this->event = $event;
     }

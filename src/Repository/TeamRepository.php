@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Entity\Event;
+use App\Entity\HackathonEvent;
 use App\Entity\Team;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
@@ -22,7 +22,7 @@ class TeamRepository extends ServiceEntityRepository
 
     /**
      * @param string $name
-     * @param Event $event
+     * @param HackathonEvent $event
      * @return mixed
      * @throws \Doctrine\ORM\NonUniqueResultException
      */

@@ -5,9 +5,9 @@ namespace App\Service;
 
 
 use App\Controller\Admin\ParticipantController;
-use App\Entity\Event;
+use App\Entity\Event\BaseEvent;
 use App\Entity\Media;
-use App\Entity\Participant;
+use App\Entity\Participant\BaseParticipant;
 use App\Entity\ProjectType;
 use App\Entity\Team;
 use App\Helper\LoggerTrait;
@@ -74,9 +74,9 @@ class CsvParser
 
     /**
      * @param $fileData
-     * @param Event $event
+     * @param BaseEvent $event
      * @return array
-     * @throws \Exception
+     * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      */
     public function parse($fileData, $event) {
         $encoders = [new CsvEncoder()];
@@ -109,10 +109,10 @@ class CsvParser
             $this->em->flush();
 
             //process participant
-            $existingParticipant = $this->em->getRepository(Participant::class)
+            $existingParticipant = $this->em->getRepository(BaseParticipant::class)
                 ->findByPersonAndEvent($person, $event);
 
-            $participant = $existingParticipant ? $existingParticipant : new Participant();
+            $participant = $existingParticipant ? $existingParticipant : new BaseParticipant();
             $participant->setEvent($event);
             $participant->setPerson($person);
 
@@ -175,7 +175,7 @@ class CsvParser
         return md5($this->token . md5($str));
     }
 
-    private function generateUrl(Participant $participant)
+    private function generateUrl(BaseParticipant $participant)
     {
         return $this->urlGenerator->generate(
             'participant_activate',
@@ -185,11 +185,11 @@ class CsvParser
     }
 
     /**
-     * @param Participant $participant
+     * @param BaseParticipant $participant
      * @return mixed
      * @throws \Exception
      */
-    private function generateQrCode(Participant $participant)
+    private function generateQrCode(BaseParticipant $participant)
     {
         $filesDir = "{$this->rootDir}/../var/files";
         $personId = $participant->getPerson()->getId();

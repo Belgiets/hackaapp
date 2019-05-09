@@ -3,7 +3,8 @@
 namespace App\Controller\Admin;
 
 
-use App\Entity\Event;
+use App\Entity\Event\BaseEvent;
+use App\Entity\HackathonEvent;
 use App\Service\CsvParser;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -36,7 +37,7 @@ class ParseCsvController extends AbstractController
         $form = $this->createFormBuilder()
             ->add('csvFile', FileType::class)
             ->add('event', EntityType::class, [
-                'class' => Event::class,
+                'class' => BaseEvent::class,
                 'choice_label' => 'title'
             ])
             ->add('parse', SubmitType::class, ['label' => 'Parse', 'attr' => ['class' => 'btn btn-primary']])

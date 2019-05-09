@@ -5,7 +5,7 @@ namespace App\Security;
 
 
 use App\Entity\Feedback;
-use App\Entity\Participant;
+use App\Entity\BaseParticipant;
 use App\Entity\User\BaseUser;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -32,7 +32,7 @@ class FeedbackVoter extends Voter
             return false;
         }
 
-        if ($subject instanceof Feedback || $subject instanceof Participant) {
+        if ($subject instanceof Feedback || $subject instanceof BaseParticipant) {
             return true;
         }
 
@@ -59,7 +59,7 @@ class FeedbackVoter extends Voter
 
                 return $this->canEdit($feedback, $user);
             case self::ACTIONS['FB_NEW']:
-                /** @var Participant $participant */
+                /** @var BaseParticipant $participant */
                 $participant = $subject;
 
                 return $this->canNew($participant, $user);
@@ -73,7 +73,7 @@ class FeedbackVoter extends Voter
         return $user === $feedback->getOwner();
     }
 
-    private function canNew(Participant $participant, BaseUser $user)
+    private function canNew(BaseParticipant $participant, BaseUser $user)
     {
         $team = $participant->getTeam();
         $mentors = $team->getMentors();

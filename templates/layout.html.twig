@@ -72,20 +72,24 @@
             </div>
             <!-- Sidebar Navidation Menus-->
             <ul class="list-unstyled">
+                {#{% set menu = [#}
+                    {#['participant_list', 'Participants', 'fa fa-users'],#}
+                    {#['team_list', 'Teams', 'fa fa-ship'],#}
+                {#] %}#}
+
+                {#{% if is_granted('ROLE_SUPER_ADMIN') %}#}
+                    {#{% set menu = menu|merge([#}
+                        {#['event_list', 'Events', 'fa fa-calendar-o'],#}
+                        {#['parse_csv', 'Parse csv', 'fa fa-cogs'],#}
+                        {#['admin_list', 'Mentors', 'fa fa-user-secret'],#}
+                        {#['technology_list', 'Technologies', 'fa fa-user-secret']#}
+                    {#]) %}#}
+                {#{% endif %}#}
                 {% set menu = [
-                    ['participant_list', 'Participants', 'fa fa-users'],
-                    ['team_list', 'Teams', 'fa fa-ship'],
+                    ['event_list', 'Events', 'fa fa-calendar-o'],
+                    ['parse_csv', 'Parse csv', 'fa fa-cogs'],
                 ] %}
-
-                {% if is_granted('ROLE_SUPER_ADMIN') %}
-                    {% set menu = menu|merge([
-                        ['event_list', 'Events', 'fa fa-calendar-o'],
-                        ['parse_csv', 'Parse csv', 'fa fa-cogs'],
-                        ['admin_list', 'Mentors', 'fa fa-user-secret'],
-                        ['technology_list', 'Technologies', 'fa fa-user-secret']
-                    ]) %}
-                {% endif %}
-
+                
                 {% for menuItem in menu %}
                     {% set active = (app.request.get('_route') == menuItem[0]) ? 'active' : '' %}
 

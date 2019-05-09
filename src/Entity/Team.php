@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Participant\HackathonParticipant;
 use App\Entity\User\AdminUser;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -28,12 +29,12 @@ class Team
     private $name;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Event", inversedBy="teams")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Event\HackathonEvent", inversedBy="teams")
      */
     private $event;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Participant", mappedBy="team")
+     * @ORM\OneToMany(targetEntity="App\Entity\Participant\HackathonParticipant", mappedBy="team")
      */
     private $participants;
 
@@ -80,12 +81,12 @@ class Team
         return $this;
     }
 
-    public function getEvent(): ?Event
+    public function getEvent(): ?HackathonEvent
     {
         return $this->event;
     }
 
-    public function setEvent(?Event $event): self
+    public function setEvent(?HackathonEvent $event): self
     {
         $this->event = $event;
 
@@ -93,14 +94,14 @@ class Team
     }
 
     /**
-     * @return Collection|Participant[]
+     * @return Collection|HackathonParticipant[]
      */
     public function getParticipants(): Collection
     {
         return $this->participants;
     }
 
-    public function addParticipant(Participant $participant): self
+    public function addParticipant(HackathonParticipant $participant): self
     {
         if (!$this->participants->contains($participant)) {
             $this->participants[] = $participant;
@@ -110,7 +111,7 @@ class Team
         return $this;
     }
 
-    public function removeParticipant(Participant $participant): self
+    public function removeParticipant(HackathonParticipant $participant): self
     {
         if ($this->participants->contains($participant)) {
             $this->participants->removeElement($participant);

@@ -2,7 +2,7 @@
 
 namespace App\Form;
 
-use App\Entity\Event;
+use App\Entity\HackathonEvent;
 use App\Entity\Team;
 use App\Entity\User\AdminUser;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -21,7 +21,7 @@ class TeamType extends AbstractType
             ->add('idea')
             ->add('isAwardee')
             ->add('event', EntityType::class, [
-                'class' => Event::class,
+                'class' => HackathonEvent::class,
                 'choice_label' => 'title'
             ])
             ->add('mentors', EntityType::class, [

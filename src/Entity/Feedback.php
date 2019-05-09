@@ -2,9 +2,7 @@
 
 namespace App\Entity;
 
-use App\Entity\User\AdminUser;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Entity\Participant\HackathonParticipant;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -20,7 +18,7 @@ class Feedback
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Participant", inversedBy="feedbacks")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Participant\HackathonParticipant", inversedBy="feedbacks")
      * @ORM\JoinColumn(nullable=false)
      */
     private $participant;
@@ -41,12 +39,12 @@ class Feedback
         return $this->id;
     }
 
-    public function getParticipant(): ?Participant
+    public function getParticipant(): ?HackathonParticipant
     {
         return $this->participant;
     }
 
-    public function setParticipant(?Participant $participant): self
+    public function setParticipant(?HackathonParticipant $participant): self
     {
         $this->participant = $participant;
 

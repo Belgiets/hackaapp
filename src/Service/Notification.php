@@ -3,7 +3,7 @@
 
 namespace App\Service;
 
-use App\Entity\Participant;
+use App\Entity\BaseParticipant;
 use App\Helper\LoggerTrait;
 use Aws\Ses\Exception\SesException;
 use Aws\Ses\SesClient;
@@ -106,7 +106,7 @@ class Notification
     }
 
     /**
-     * @param \App\Entity\Event $event
+     * @param \App\Entity\HackathonEvent $event
      * @return int
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime

@@ -24,7 +24,7 @@ class ProjectType
     private $title;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Participant", mappedBy="projectType")
+     * @ORM\OneToMany(targetEntity="App\Entity\Participant\HackathonParticipant", mappedBy="projectType")
      */
     private $participants;
 
@@ -51,14 +51,14 @@ class ProjectType
     }
 
     /**
-     * @return Collection|Participant[]
+     * @return Collection|BaseParticipant[]
      */
     public function getParticipants(): Collection
     {
         return $this->participants;
     }
 
-    public function addParticipant(Participant $participant): self
+    public function addParticipant(BaseParticipant $participant): self
     {
         if (!$this->participants->contains($participant)) {
             $this->participants[] = $participant;
@@ -68,7 +68,7 @@ class ProjectType
         return $this;
     }
 
-    public function removeParticipant(Participant $participant): self
+    public function removeParticipant(BaseParticipant $participant): self
     {
         if ($this->participants->contains($participant)) {
             $this->participants->removeElement($participant);

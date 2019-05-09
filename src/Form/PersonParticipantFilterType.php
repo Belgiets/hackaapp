@@ -3,7 +3,8 @@
 namespace App\Form;
 
 
-use App\Entity\Event;
+use App\Entity\Event\BaseEvent;
+use App\Entity\HackathonEvent;
 use App\Entity\ProjectType;
 use App\Entity\Team;
 use App\Form\Model\PersonParticipantModel;
@@ -76,7 +77,7 @@ class PersonParticipantFilterType extends AbstractType
                 'event',
                 EntityType::class,
                 [
-                    'class' => Event::class,
+                    'class' => BaseEvent::class,
                     'placeholder' => 'No matter',
                     'required' => false
                 ]
