@@ -87,7 +87,7 @@ class Person
     private $photo;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Technology", mappedBy="persons")
+     * @ORM\ManyToMany(targetEntity="App\Entity\Technology", mappedBy="persons", cascade={"persist"})
      */
     private $technologies;
 

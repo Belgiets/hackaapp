@@ -23,6 +23,20 @@ class TechnologyRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('t')->getQuery();
     }
+
+    /**
+     * @param string $str
+     * @return mixed
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findByTitle(string $str)
+    {
+        return $this->createQueryBuilder('t')
+            ->where('t.title LIKE :str')
+            ->setParameter('str', "%$str%")
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 //    /**
 //     * @return Technology[] Returns an array of Technology objects
 //     */
