@@ -10,7 +10,9 @@ use App\Entity\Media;
 use App\Entity\Participant;
 use App\Entity\ProjectType;
 use App\Entity\Team;
+use App\Entity\Technology;
 use App\Helper\LoggerTrait;
+use App\Repository\TechnologyRepository;
 use App\Serializer\PersonNameConverter;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Endroid\QrCode\QrCode;
@@ -23,11 +25,6 @@ use App\Entity\Person;
 class CsvParser
 {
     use LoggerTrait;
-
-    /**
-     * @var \Doctrine\Common\Persistence\ObjectManager
-     */
-    private $em;
 
     /**
      * @var string
@@ -52,6 +49,10 @@ class CsvParser
      * @var string
      */
     private $folderQr;
+    /**
+     * @var ManagerRegistry
+     */
+    private $doctrine;
 
     /**
      * CsvParser constructor.
@@ -64,21 +65,22 @@ class CsvParser
         string $rootDir,
         string $folderQr)
     {
-        $this->em = $doctrine->getManager();
         $this->token = $token;
         $this->urlGenerator = $urlGenerator;
         $this->rootDir = $rootDir;
         $this->s3Service = $s3Service;
         $this->folderQr = $folderQr;
+        $this->doctrine = $doctrine;
     }
 
     /**
      * @param $fileData
      * @param Event $event
      * @return array
-     * @throws \Exception
+     * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      */
     public function parse($fileData, $event) {
+        $em = $this->doctrine->getManager();
         $encoders = [new CsvEncoder()];
         $nameConverter = new PersonNameConverter();
         $normalizers = [new ObjectNormalizer(null, $nameConverter)];
@@ -88,7 +90,7 @@ class CsvParser
 
         $success = 0;
         foreach ($rows as $row) {
-            $existingPerson = $this->em->getRepository(Person::class)
+            $existingPerson = $em->getRepository(Person::class)
                 ->findOneBy(['email' => $row['Електронна адреса (якою ти найчастіше користуєшся)']]);
 
             //process person
@@ -105,22 +107,39 @@ class CsvParser
                 $person = $serializer->denormalize($row, Person::class);
             }
 
-            $this->em->persist($person);
-            $this->em->flush();
+            $em->persist($person);
+            $em->flush();
 
             //process participant
-            $existingParticipant = $this->em->getRepository(Participant::class)
+            $existingParticipant = $em->getRepository(Participant::class)
                 ->findByPersonAndEvent($person, $event);
 
             $participant = $existingParticipant ? $existingParticipant : new Participant();
             $participant->setEvent($event);
             $participant->setPerson($person);
 
-            $projectType = $this->em->getRepository(ProjectType::class)
-                ->findByStr($row['Який проект ти хочеш робити']);
+            if (!empty($row['Який проект ти хочеш робити'])) {
+                $projectType = $em->getRepository(ProjectType::class)
+                    ->findByStr($row['Який проект ти хочеш робити']);
 
-            if ($projectType) {
-                $participant->setProjectType($projectType);
+                if ($projectType) {
+                    $participant->setProjectType($projectType);
+                }
+            }
+
+            if (!empty($row["Технології, які ти плануєш використовувати на хакатоні"])) {
+                $technologiesTitles = explode(";", $row["Технології, які ти плануєш використовувати на хакатоні"]);
+
+                foreach ($technologiesTitles as $technologiesTitle) {
+                    $technology = $em->getRepository(Technology::class)->findByTitle($technologiesTitle);
+
+                    if (!$technology) {
+                        $technology = new Technology();
+                        $technology->setTitle($technologiesTitle);
+                    }
+
+                    $person->addTechnology($technology);
+                }
             }
 
             $participant->setActivationCode($this->generateCode($person->getEmail() . $participant->getEvent()->getTitle()));
@@ -129,8 +148,8 @@ class CsvParser
                 $media = new Media();
                 $media->setUrl($url);
 
-                $this->em->persist($media);
-                $this->em->flush();
+                $em->persist($media);
+                $em->flush();
 
                 $participant->setActivationQr($media);
             }
@@ -138,7 +157,7 @@ class CsvParser
             //process team
             if ($row["Чи є в тебе команда? "] === "Так") {
                 if ($teamName = empty($row["Назва команди "]) ? false : $row["Назва команди "]) {
-                    $team = $this->em->getRepository(Team::class)->findByNameAndEvent($teamName, $event);
+                    $team = $em->getRepository(Team::class)->findByNameAndEvent($teamName, $event);
 
                     if (!$team) {
                         $team = new Team();
@@ -146,15 +165,15 @@ class CsvParser
                         $team->setEvent($event);
                     }
 
-                    $this->em->persist($team);
-                    $this->em->flush();
+                    $em->persist($team);
+                    $em->flush();
 
                     $participant->setTeam($team);
                 }
             }
 
-            $this->em->persist($participant);
-            $this->em->flush();
+            $em->persist($participant);
+            $em->flush();
 
             $success++;
         }

@@ -80,4 +80,9 @@ class Feedback
     {
         $this->description = $description;
     }
+
+    public function getOwner()
+    {
+        return $this->getMentor();
+    }
 }

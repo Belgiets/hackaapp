@@ -13,21 +13,18 @@ use App\Form\SearchParticipantType;
 use App\Helper\PaginatorTrait;
 use App\Repository\ParticipantRepository;
 use App\Repository\PersonRepository;
-use App\Service\Notification;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
  * @Route("/admin/participant")
  */
-class ParticipantController extends Controller
+class ParticipantController extends AbstractController
 {
     use PaginatorTrait;
 
@@ -35,8 +32,7 @@ class ParticipantController extends Controller
 
     /**
      * @IsGranted("ROLE_ADMIN")
-     * @Route("", name="participant_list")
-     * @Method({"GET", "POST"})
+     * @Route("", name="participant_list", methods={"GET","POST"})
      */
     public function listAction(Request $request, ParticipantRepository $repository)
     {
@@ -96,8 +92,7 @@ class ParticipantController extends Controller
 
     /**
      * @IsGranted("ROLE_SUPER_ADMIN")
-     * @Route("/activate", name="participant_activate")
-     * @Method({"GET", "POST"})
+     * @Route("/activate", name="participant_activate", methods={"GET","POST"})
      */
     public function activate(Request $request)
     {
@@ -155,7 +150,7 @@ class ParticipantController extends Controller
 
     /**
      * @IsGranted("ROLE_SUPER_ADMIN")
-     * @Route("/new", name="participant_new", methods="GET|POST")
+     * @Route("/new", name="participant_new", methods={"GET","POST"})
      */
     public function new(Request $request, SessionInterface $session, PersonRepository $personRepository)
     {
@@ -183,7 +178,7 @@ class ParticipantController extends Controller
 
     /**
      * @IsGranted("ROLE_ADMIN")
-     * @Route("/{id}", name="participant_show", methods="GET")
+     * @Route("/{id}", name="participant_show", methods={"GET"})
      */
     public function show(Participant $participant)
     {
@@ -195,7 +190,7 @@ class ParticipantController extends Controller
 
     /**
      * @IsGranted("ROLE_ADMIN")
-     * @Route("/{id}/edit", name="participant_edit", methods="GET|POST")
+     * @Route("/{id}/edit", name="participant_edit", methods={"GET","POST"})
      */
     public function edit(Request $request, Participant $participant)
     {

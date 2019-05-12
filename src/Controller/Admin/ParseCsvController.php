@@ -6,11 +6,11 @@ namespace App\Controller\Admin;
 use App\Entity\Event;
 use App\Service\CsvParser;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
@@ -20,7 +20,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
  * @Route("/admin/csv")
  * @IsGranted("ROLE_SUPER_ADMIN")
  */
-class ParseCsvController extends Controller
+class ParseCsvController extends AbstractController
 {
 
     /**

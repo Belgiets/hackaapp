@@ -3,12 +3,10 @@
 
 namespace App\Service;
 
-use App\Entity\Participant;
 use App\Helper\LoggerTrait;
 use Aws\Ses\Exception\SesException;
 use Aws\Ses\SesClient;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Sendinblue\Mailin;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Environment;
@@ -18,18 +16,10 @@ class Notification
 {
     use LoggerTrait;
 
-    const ENDPOINT = 'https://api.sendinblue.com/v2.0';
-    const TIMEOUT = 5000;
-
     /**
      * @var string
      */
     private $from;
-
-    /**
-     * @var Mailin
-     */
-    private $mailing;
 
     /**
      * @var Environment
@@ -59,7 +49,6 @@ class Notification
         ManagerRegistry $doctrine
     ) {
         $this->from = $from;
-        $this->mailing = new Mailin(self::ENDPOINT, $apiKey, self::TIMEOUT);;
         $this->twig = $twig;
         $this->generator = $generator;
         $this->em = $doctrine->getManager();

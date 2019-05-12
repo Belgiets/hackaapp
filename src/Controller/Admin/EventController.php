@@ -9,10 +9,9 @@ use App\Helper\PaginatorTrait;
 use App\Repository\ParticipantRepository;
 use App\Repository\TeamRepository;
 use App\Service\Notification;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
@@ -22,13 +21,12 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
  * @Route("/admin/event")
  * @IsGranted("ROLE_SUPER_ADMIN")
  */
-class EventController extends Controller
+class EventController extends AbstractController
 {
     use PaginatorTrait;
 
     /**
-     * @Route("", name="event_list")
-     * @Method({"GET"})
+     * @Route("", name="event_list", methods={"GET"})
      */
     public function listAction(Request $request)
     {
@@ -48,8 +46,7 @@ class EventController extends Controller
     }
 
     /**
-     * @Route("/new", name="event_new")
-     * @Method({"GET", "POST"})
+     * @Route("/new", name="event_new", methods={"GET","POST"})
      */
     public function newAction(Request $request)
     {
@@ -76,8 +73,7 @@ class EventController extends Controller
     }
 
     /**
-     * @Route("/{id}/edit", name="event_edit")
-     * @Method({"GET", "POST"})
+     * @Route("/{id}/edit", name="event_edit", methods={"GET","POST"})
      */
     public function editAction(Request $request, Event $event)
     {
@@ -102,8 +98,7 @@ class EventController extends Controller
     }
 
     /**
-     * @Route("/{id}/delete", name="event_delete")
-     * @Method({"GET", "POST"})
+     * @Route("/{id}/delete", name="event_delete", methods={"GET","POST"})
      */
     public function deleteAction(Request $request, Event $event)
     {
@@ -115,8 +110,7 @@ class EventController extends Controller
     }
 
     /**
-     * @Route("/{id}/notify", name="event_notify")
-     * @Method({"GET", "POST"})
+     * @Route("/{id}/notify", name="event_notify", methods={"GET","POST"})
      *
      * @param Event $event
      * @param Notification $notification
@@ -136,8 +130,7 @@ class EventController extends Controller
 
     /**
      * @IsGranted("ROLE_SUPER_ADMIN")
-     * @Route("/{id}/notify-activated", name="event_notify_activated", methods="GET|POST")
-     *
+     * @Route("/{id}/notify-activated", name="event_notify_activated", methods={"GET","POST"})
      */
     public function notifyActivated(Event $event, ParticipantRepository $repository, Notification $notification)
     {
@@ -159,7 +152,7 @@ class EventController extends Controller
 
     /**
      * @IsGranted("ROLE_SUPER_ADMIN")
-     * @Route("/{id}/notify-awarded", name="event_notify_awarded", methods="GET|POST")
+     * @Route("/{id}/notify-awarded", name="event_notify_awarded", methods={"GET","POST"})
      */
     public function notifyAwarded(Event $event, TeamRepository $repository, Notification $notification)
     {
