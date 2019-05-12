@@ -25,3 +25,18 @@
   -ms-flex-align: center;
   align-items: center;
 }
+
+.zebra {
+  & > div {
+    margin: 0;
+    border-top: 1px solid #343a40;
+
+    &:first-child {
+      border: none;
+    }
+
+    &:nth-child(even) {
+      background: #282b2f;
+    }
+  }
+}
