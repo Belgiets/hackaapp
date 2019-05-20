@@ -99,13 +99,24 @@
                             <thead>
                             <tr>
                                 <th>#</th>
-                                {#<th>Event</th>#}
-                                <th>Last name</th>
-                                <th>First name</th>
-                                <th>Email</th>
-                                <th>Phone number</th>
-                                <th>Notified</th>
-                                <th>Status</th>
+                                <th{% if items.isSorted('participant.person') %} class="sorted"{% endif %}>
+                                    {{ knp_pagination_sortable(items, 'Last name', 'person.lastName') }}
+                                </th>
+                                <th{% if items.isSorted('participant.person') %} class="sorted"{% endif %}>
+                                    {{ knp_pagination_sortable(items, 'First name', 'person.firstName') }}
+                                </th>
+                                <th{% if items.isSorted('participant.person') %} class="sorted"{% endif %}>
+                                    {{ knp_pagination_sortable(items, 'Email', 'person.email') }}
+                                </th>
+                                <th{% if items.isSorted('participant.person') %} class="sorted"{% endif %}>
+                                    {{ knp_pagination_sortable(items, 'Email', 'person.phoneNumber') }}
+                                </th>
+                                <th{% if items.isSorted('participant.isNotified') %} class="sorted"{% endif %}>
+                                    {{ knp_pagination_sortable(items, 'Notified', 'participant.isNotified') }}
+                                </th>
+                                <th{% if items.isSorted('participant.isActive') %} class="sorted"{% endif %}>
+                                    {{ knp_pagination_sortable(items, 'Status', 'participant.isActive') }}
+                                </th>
                                 <th>Actions</th>
                             </tr>
                             </thead>

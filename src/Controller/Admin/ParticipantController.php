@@ -37,7 +37,7 @@ class ParticipantController extends AbstractController
     public function listAction(Request $request, ParticipantRepository $repository)
     {
         $target = $repository->getAll();
-        $page_range = $this->getParameter('knp_paginator.page_range');
+        $pageRange = $this->getParameter('knp_paginator.page_range');
 
         //search by lastname
         $searchForm = $this->createForm(SearchParticipantType::class);
@@ -59,7 +59,7 @@ class ParticipantController extends AbstractController
                     $target = $repository->searchByLastName($searchStr);
                 }
 
-                $page_range = 1000;
+                $pageRange = 1000;
             }
         } elseif ($request->request->has('person_participant_filter')) {
             $filterForm->handleRequest($request);
@@ -68,7 +68,7 @@ class ParticipantController extends AbstractController
                 if ($filterResult = $repository->filterByForm($model)) {
                     $target = $filterResult;
 
-                    $page_range = 1000;
+                    $pageRange = 1000;
                 }
             }
         }
@@ -76,7 +76,8 @@ class ParticipantController extends AbstractController
         $participants = $this->paginator->paginate(
             $target,
             $request->query->getInt('page', 1),
-            $page_range
+            $pageRange,
+            ['defaultSortFieldName' => 'person.lastName', 'defaultSortDirection' => 'asc']
         );
 
         return $this->render(
