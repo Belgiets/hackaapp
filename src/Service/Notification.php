@@ -3,6 +3,8 @@
 
 namespace App\Service;
 
+use App\Entity\Participant;
+use App\Entity\Person;
 use App\Helper\LoggerTrait;
 use Aws\Ses\Exception\SesException;
 use Aws\Ses\SesClient;
@@ -10,6 +12,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Environment;
+use Doctrine\Common\Collections\Collection;
 
 
 class Notification
@@ -36,11 +39,6 @@ class Notification
      */
     private $em;
 
-    /**
-     * Notification constructor.
-     *
-     * @throws \Exception
-     */
     public function __construct(
         string $from,
         string $apiKey,
@@ -59,15 +57,15 @@ class Notification
      * @param string $title
      * @param string $template
      * @param array $attrs
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
      */
     private function sendEmail($to, $title, $template, $attrs = [])
     {
         $s3 = new SesClient([
             'version' => 'latest',
-            'region' => 'eu-west-1'
+            'region' => 'eu-west-1',
         ]);
 
         try {
@@ -80,14 +78,14 @@ class Notification
                         'Html' => [
                             'Charset' => 'UTF-8',
                             'Data' => $this->twig->render($template, $attrs),
-                        ]
+                        ],
                     ],
                     'Subject' => [
                         'Charset' => 'UTF-8',
-                        'Data' => $title
-                    ]
+                        'Data' => $title,
+                    ],
                 ],
-                'Source' => $this->from
+                'Source' => $this->from,
             ]);
         } catch (SesException $error) {
             $this->logger->error($error->getAwsErrorMessage());
@@ -97,16 +95,19 @@ class Notification
     /**
      * @param \App\Entity\Event $event
      * @return int
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
      */
     public function notifyByEvent($event)
     {
+        /** @var Collection|Participant[] $participants */
         $participants = $event->getParticipants();
 
         if (!empty($participants)) {
+            /** @var Participant $participant */
             foreach ($participants->toArray() as $participant) {
+                /** @var Person $person */
                 $person = $participant->getPerson();
 
                 $this->sendEmail(
@@ -179,9 +180,9 @@ class Notification
      * @param string $subject
      * @param string $email
      * @param string $template
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
      */
     public function notify(string $subject, string $email, string $template)
     {
