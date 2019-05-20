@@ -26,6 +26,16 @@ class EventController extends AbstractController
     use PaginatorTrait;
 
     /**
+     * @var Notification
+     */
+    private $notification;
+
+    public function __construct(Notification $notification)
+    {
+        $this->notification = $notification;
+    }
+
+    /**
      * @Route("", name="event_list", methods={"GET"})
      */
     public function listAction(Request $request)
@@ -111,19 +121,12 @@ class EventController extends AbstractController
 
     /**
      * @Route("/{id}/notify", name="event_notify", methods={"GET","POST"})
-     *
-     * @param Event $event
-     * @param Notification $notification
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
      */
-    public function notify(Event $event, Notification $notification)
+    public function notify(Event $event)
     {
-        $result = $notification->notifyByEvent($event);
+        $resultQty = $this->notification->notifyByEvent($event);
 
-        $this->addFlash('success', "Notified {$result} participants");
+        $this->addFlash('success', "Notified {$resultQty} participants");
 
         return $this->redirectToRoute('event_list');
     }
@@ -132,13 +135,13 @@ class EventController extends AbstractController
      * @IsGranted("ROLE_SUPER_ADMIN")
      * @Route("/{id}/notify-activated", name="event_notify_activated", methods={"GET","POST"})
      */
-    public function notifyActivated(Event $event, ParticipantRepository $repository, Notification $notification)
+    public function notifyActivated(Event $event, ParticipantRepository $repository)
     {
         $activated = $repository->findBy(['event' => $event, 'isActive' => true]);
 
         /** @var Participant $participant */
         foreach ($activated as $participant) {
-            $notification->notify(
+            $this->notification->notify(
                 $participant->getEvent()->getTitle(),
                 $participant->getPerson()->getEmail(),
                 'emails/notifyActivated.html.twig'
@@ -154,7 +157,7 @@ class EventController extends AbstractController
      * @IsGranted("ROLE_SUPER_ADMIN")
      * @Route("/{id}/notify-awarded", name="event_notify_awarded", methods={"GET","POST"})
      */
-    public function notifyAwarded(Event $event, TeamRepository $repository, Notification $notification)
+    public function notifyAwarded(Event $event, TeamRepository $repository)
     {
         $teams = $repository->findBy(['event' => $event, 'isAwardee' => true]);
 
@@ -163,7 +166,7 @@ class EventController extends AbstractController
 
             foreach ($participants as $participant) {
                 if ($participant->isActive()) {
-                    $notification->notify(
+                    $this->notification->notify(
                         $participant->getEvent()->getTitle(),
                         $participant->getPerson()->getEmail(),
                         'emails/notifyAwarded.html.twig'
