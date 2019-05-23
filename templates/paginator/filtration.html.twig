@@ -1,0 +1,19 @@
+<form method="get" action="{{ action }}" enctype="application/x-www-form-urlencoded">
+    <div class="row mb-3">
+        <div class="col-12 col-sm-2">
+            <select class="btn btn-primary btn ml-3" name="{{ filterFieldName }}">
+                {% for field, label in fields %}
+                    <option value="{{ field }}"{% if selectedField == field %} selected="selected"{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-12 col-sm-3">
+            <input class="form-control" type="text" value="{{ selectedValue }}" name="{{ filterValueName }}" />
+        </div>
+
+        <div class="col-12 col-sm-3">
+            <button class="btn btn-primary btn ml-3">{{ options.button }}</button>
+        </div>
+    </div>
+</form>
