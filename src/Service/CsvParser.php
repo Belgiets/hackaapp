@@ -21,6 +21,7 @@ use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\Encoder\CsvEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use App\Entity\Person;
+use Exception;
 
 class CsvParser
 {
@@ -131,14 +132,18 @@ class CsvParser
                 $technologiesTitles = explode(";", $row["Технології, які ти плануєш використовувати на хакатоні"]);
 
                 foreach ($technologiesTitles as $technologiesTitle) {
-                    $technology = $em->getRepository(Technology::class)->findByTitle($technologiesTitle);
+                    $technologies = $em->getRepository(Technology::class)
+                        ->findBy(['title' => $technologiesTitle]);
 
-                    if (!$technology) {
+                    if (!$technologies) {
                         $technology = new Technology();
                         $technology->setTitle($technologiesTitle);
+                        $person->addTechnology($technology);
+                    } else {
+                        foreach ($technologies as $technology) {
+                            $person->addTechnology($technology);
+                        }
                     }
-
-                    $person->addTechnology($technology);
                 }
             }
 
