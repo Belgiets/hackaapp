@@ -1,7 +1,7 @@
 {% extends 'layout.html.twig' %}
 
 {% block content %}
-    <!-- Page Header-->
+    <!-- Page Header -->
     <div class="page-header no-margin-bottom" xmlns="http://www.w3.org/1999/html">
         <div class="container-fluid">
             <h2 class="h5 no-margin-bottom">
@@ -12,15 +12,26 @@
             </h2>
         </div>
     </div>
-    <!-- Breadcrumb-->
+
+    <!-- Breadcrumb -->
     <div class="container-fluid">
         <ul class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{ path('team_list') }}">Home</a></li>
             <li class="breadcrumb-item active">{{ title }}</li>
         </ul>
     </div>
+
+    <!-- Filter -->
     <section class="no-padding-top">
         <div class="container-fluid">
+            <div class="block margin-bottom-sm">
+                {{ knp_pagination_filter(items, {
+                    't.name': 'Team name',
+                    'e.title': 'Event',
+                    't.place': 'Place',
+                    't.isAwardee': 'Awarded'
+                }) }}
+            </div>
             <div class="block margin-bottom-sm">
                 {% if not items is empty %}
                     <div class="table-responsive">
@@ -28,13 +39,21 @@
                             <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Name</th>
-                                <th>Event</th>
+                                <th {% if items.isSorted('t.name') %} class="sorted"{% endif %}>
+                                    {{ knp_pagination_sortable(items, 'Name', 't.name') }}
+                                </th>
+                                <th {% if items.isSorted('e.title') %} class="sorted"{% endif %}>
+                                    {{ knp_pagination_sortable(items, 'Event', 'e.title') }}
+                                </th>
                                 <th>Teammates</th>
-                                <th>Place</th>
+                                <th {% if items.isSorted('t.place') %} class="sorted"{% endif %}>
+                                    {{ knp_pagination_sortable(items, 'Place', 't.place') }}
+                                </th>
                                 <th>Mentors</th>
                                 <th>Idea</th>
-                                <th>Awarded</th>
+                                <th {% if items.isSorted('t.isAwardee') %} class="sorted"{% endif %}>
+                                    {{ knp_pagination_sortable(items, 'Awarded', 't.isAwardee') }}
+                                </th>
                                 <th>Actions</th>
                             </tr>
                             </thead>

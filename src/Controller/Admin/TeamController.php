@@ -29,7 +29,9 @@ class TeamController extends AbstractController
         $teams = $this->paginator->paginate(
             $this->getDoctrine()->getRepository(Team::class)->getAll(),
             $request->query->getInt('page', 1),
-            $this->getParameter('knp_paginator.page_range')
+            $this->getParameter('knp_paginator.page_range'),
+            ['defaultSortFieldName' => 't.name', 'defaultSortDirection' => 'asc']
+
         );
 
         return $this->render(

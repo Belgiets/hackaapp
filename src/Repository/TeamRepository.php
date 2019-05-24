@@ -38,7 +38,9 @@ class TeamRepository extends ServiceEntityRepository
 
     public function getAll()
     {
-        return $this->createQueryBuilder('t')->getQuery();
+        return $this->createQueryBuilder('t')
+            ->leftJoin('t.event', 'e')
+            ->getQuery();
     }
 //    /**
 //     * @return Team[] Returns an array of Team objects
