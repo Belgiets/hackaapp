@@ -103,6 +103,14 @@ class ParticipantRepository extends ServiceEntityRepository
                 ->setParameter('team', $model->getTeam());
         }
 
+        if ($model->hasPhoto() !== null) {
+            if ($model->hasPhoto()) {
+                $qb->andWhere('person.photo IS NOT NULL');
+            } else {
+                $qb->andWhere('person.photo IS NULL');
+            }
+        }
+
         $qb->getQuery();
 
         return $qb;

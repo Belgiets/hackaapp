@@ -58,8 +58,6 @@ class ParticipantController extends AbstractController
                 if (!empty($searchStr)) {
                     $target = $repository->searchByLastName($searchStr);
                 }
-
-                $pageRange = 5;
             }
         } elseif ($request->request->has('person_participant_filter')) {
             $filterForm->handleRequest($request);
@@ -68,7 +66,7 @@ class ParticipantController extends AbstractController
                 if ($filterResult = $repository->filterByForm($model)) {
                     $target = $filterResult;
 
-                    $pageRange = 5;
+                    $pageRange = $model->getPageRange();
                 }
             }
         }

@@ -82,15 +82,15 @@ class PersonParticipantFilterType extends AbstractType
                     'required' => false
                 ]
             )
-            ->add(
-                'projectType',
-                EntityType::class,
-                [
-                    'class' => ProjectType::class,
-                    'placeholder' => 'No matter',
-                    'required' => false
-                ]
-            )
+//            ->add(
+//                'projectType',
+//                EntityType::class,
+//                [
+//                    'class' => ProjectType::class,
+//                    'placeholder' => 'No matter',
+//                    'required' => false
+//                ]
+//            )
             ->add(
                 'team',
                 EntityType::class,
@@ -110,6 +110,30 @@ class PersonParticipantFilterType extends AbstractType
                         'No matter' => null,
                         'Yes' => true,
                     ],
+                ]
+            )
+            ->add(
+                'hasPhoto',
+                ChoiceType::class,
+                [
+                    'label' => 'Has photo?',
+                    'expanded' => true,
+                    'choices' => [
+                        'No matter' => null,
+                        'Yes' => true,
+                        'No' => false
+                    ],
+                ]
+            )
+            ->add('pageRange',
+                ChoiceType::class,
+                [
+                    'choices' => [
+                        '20' => 20,
+                        '50' => 50,
+                        '100' => 100,
+                        '500' => 500
+                    ]
                 ]
             )
         ;
