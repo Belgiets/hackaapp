@@ -44,6 +44,21 @@ class PersonParticipantModel
     private $team;
 
     /**
+     * @var boolean
+     */
+    private $noTeam;
+
+    /**
+     * @var integer
+     */
+    private $pageRange;
+
+    /**
+     * @var boolean
+     */
+    private $hasPhoto;
+
+    /**
      * @return bool
      */
     public function isEmployment()
@@ -83,9 +98,6 @@ class PersonParticipantModel
         return $this->isNotified;
     }
 
-    /**
-     * @param bool $isNotified
-     */
     public function setIsNotified(bool $isNotified): void
     {
         $this->isNotified = $isNotified;
@@ -99,59 +111,69 @@ class PersonParticipantModel
         return $this->isActive;
     }
 
-    /**
-     * @param bool $isActive
-     */
     public function setIsActive(bool $isActive): void
     {
         $this->isActive = $isActive;
     }
 
-    /**
-     * @return \App\Entity\Event
-     */
     public function getEvent()
     {
         return $this->event;
     }
 
-    /**
-     * @param \App\Entity\Event $event
-     */
     public function setEvent(\App\Entity\Event $event): void
     {
         $this->event = $event;
     }
 
-    /**
-     * @return \App\Entity\ProjectType
-     */
     public function getProjectType()
     {
         return $this->projectType;
     }
 
-    /**
-     * @param \App\Entity\ProjectType $projectType
-     */
     public function setProjectType(\App\Entity\ProjectType $projectType): void
     {
         $this->projectType = $projectType;
     }
 
-    /**
-     * @return \App\Entity\Team
-     */
+
     public function getTeam()
     {
         return $this->team;
     }
 
-    /**
-     * @param \App\Entity\Team $team
-     */
     public function setTeam(\App\Entity\Team $team): void
     {
         $this->team = $team;
+    }
+
+    public function isNoTeam(): ? bool
+    {
+        return $this->noTeam;
+    }
+
+    public function setNoTeam(bool $noTeam): void
+    {
+        $this->noTeam = $noTeam;
+    }
+
+    public function getPageRange()
+    {
+        return $this->pageRange;
+    }
+
+    public function setPageRange(int $pageRange): void
+    {
+        $this->pageRange = $pageRange;
+    }
+
+    public function hasPhoto(): ? bool
+    {
+        return $this->hasPhoto;
+    }
+
+    public function setHasPhoto(bool $hasPhoto): void
+    {
+        $this->hasPhoto = $hasPhoto;
     }
 }

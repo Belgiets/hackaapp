@@ -9,6 +9,7 @@ use App\Entity\Team;
 use App\Form\Model\PersonParticipantModel;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -81,15 +82,15 @@ class PersonParticipantFilterType extends AbstractType
                     'required' => false
                 ]
             )
-            ->add(
-                'projectType',
-                EntityType::class,
-                [
-                    'class' => ProjectType::class,
-                    'placeholder' => 'No matter',
-                    'required' => false
-                ]
-            )
+//            ->add(
+//                'projectType',
+//                EntityType::class,
+//                [
+//                    'class' => ProjectType::class,
+//                    'placeholder' => 'No matter',
+//                    'required' => false
+//                ]
+//            )
             ->add(
                 'team',
                 EntityType::class,
@@ -98,7 +99,44 @@ class PersonParticipantFilterType extends AbstractType
                     'placeholder' => 'No matter',
                     'required' => false
                 ]
-            );
+            )
+            ->add(
+                'noTeam',
+                ChoiceType::class,
+                [
+                    'label' => 'No team?',
+                    'expanded' => true,
+                    'choices' => [
+                        'No matter' => null,
+                        'Yes' => true,
+                    ],
+                ]
+            )
+            ->add(
+                'hasPhoto',
+                ChoiceType::class,
+                [
+                    'label' => 'Has photo?',
+                    'expanded' => true,
+                    'choices' => [
+                        'No matter' => null,
+                        'Yes' => true,
+                        'No' => false
+                    ],
+                ]
+            )
+            ->add('pageRange',
+                ChoiceType::class,
+                [
+                    'choices' => [
+                        '20' => 20,
+                        '50' => 50,
+                        '100' => 100,
+                        '500' => 500
+                    ]
+                ]
+            )
+        ;
     }
 
     public function configureOptions(OptionsResolver $resolver)
