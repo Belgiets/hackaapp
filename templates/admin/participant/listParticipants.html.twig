@@ -61,9 +61,12 @@
                             {{ form_widget(filter_form.isActive) }}
                         </div>
                         <div class="col-12 col-sm-4">
-                            {{ form_label(filter_form.projectType) }}
-                            {{ form_errors(filter_form.projectType) }}
-                            {{ form_widget(filter_form.projectType) }}
+{#                            {{ form_label(filter_form.projectType) }}#}
+{#                            {{ form_errors(filter_form.projectType) }}#}
+{#                            {{ form_widget(filter_form.projectType) }}#}
+                            {{ form_label(filter_form.pageRange) }}
+                            {{ form_errors(filter_form.pageRange) }}
+                            {{ form_widget(filter_form.pageRange) }}
                         </div>
                     </div>
 
@@ -77,6 +80,16 @@
                             {{ form_label(filter_form.team) }}
                             {{ form_errors(filter_form.team) }}
                             {{ form_widget(filter_form.team) }}
+                        </div>
+                        <div class="col-12 col-sm-2">
+                            {{ form_label(filter_form.noTeam) }}
+                            {{ form_errors(filter_form.noTeam) }}
+                            {{ form_widget(filter_form.noTeam) }}
+                        </div>
+                        <div class="col-12 col-sm-2">
+                            {{ form_label(filter_form.hasPhoto) }}
+                            {{ form_errors(filter_form.hasPhoto) }}
+                            {{ form_widget(filter_form.hasPhoto) }}
                         </div>
                     </div>
 
