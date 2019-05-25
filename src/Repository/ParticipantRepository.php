@@ -105,6 +105,14 @@ class ParticipantRepository extends ServiceEntityRepository
 
         if ($model->hasPhoto() !== null) {
             if ($model->hasPhoto()) {
+                //TODO: add supporting if media.url is null
+//                SELECT participant.id FROM person
+//    LEFT join media
+//    ON person.photo_id = media.id
+//    LEFT JOIN participant
+//    ON person.id = participant.person_id
+//    WHERE participant.event_id = 2 AND participant.is_active = true AND media.url IS NULL
+//                ;
                 $qb->andWhere('person.photo IS NOT NULL');
             } else {
                 $qb->andWhere('person.photo IS NULL');
