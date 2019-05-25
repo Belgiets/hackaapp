@@ -44,6 +44,11 @@ class PersonParticipantModel
     private $team;
 
     /**
+     * @var boolean
+     */
+    private $noTeam;
+
+    /**
      * @return bool
      */
     public function isEmployment()
@@ -154,4 +159,21 @@ class PersonParticipantModel
     {
         $this->team = $team;
     }
+
+    /**
+     * @return bool
+     */
+    public function isNoTeam(): ? bool
+    {
+        return $this->noTeam;
+    }
+
+    /**
+     * @param bool $noTeam
+     */
+    public function setNoTeam(bool $noTeam): void
+    {
+        $this->noTeam = $noTeam;
+    }
+
 }

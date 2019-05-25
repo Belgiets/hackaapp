@@ -96,7 +96,9 @@ class ParticipantRepository extends ServiceEntityRepository
                 ->setParameter('projectType', $model->getProjectType());
         }
 
-        if ($model->getTeam() !== null) {
+        if ($model->isNoTeam() !== null) {
+            $qb->andWhere('participant.team is NULL');
+        } else if ($model->getTeam() !== null) {
             $qb->andWhere('participant.team = :team')
                 ->setParameter('team', $model->getTeam());
         }

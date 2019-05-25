@@ -9,6 +9,7 @@ use App\Entity\Team;
 use App\Form\Model\PersonParticipantModel;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -98,7 +99,20 @@ class PersonParticipantFilterType extends AbstractType
                     'placeholder' => 'No matter',
                     'required' => false
                 ]
-            );
+            )
+            ->add(
+                'noTeam',
+                ChoiceType::class,
+                [
+                    'label' => 'No team?',
+                    'expanded' => true,
+                    'choices' => [
+                        'No matter' => null,
+                        'Yes' => true,
+                    ],
+                ]
+            )
+        ;
     }
 
     public function configureOptions(OptionsResolver $resolver)
